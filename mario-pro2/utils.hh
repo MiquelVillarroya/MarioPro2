@@ -30,6 +30,15 @@ void paint_hline(pro2::Window& window, int xini, int xfin, int y, pro2::Color co
 void paint_vline(pro2::Window& window, int x, int yini, int yfin, pro2::Color color = pro2::white);
 
 /**
+ * @brief Dibuixa un rectangle omplert a la pantalla
+ * 
+ * @param window Finestra a la que pintar
+ * @param rect Mides del rectangle a pintar
+ * @param color Color del rectange (opcional, si no es posa s'assumeix `white`).
+ */
+void paint_rect(pro2::Window& window, Rect rect, pro2::Color color);
+
+/**
  * @brief Dibuixa una imatge/textura a la finestra a partir d'una posició
  *
  * @param window Finestra a la que pintar

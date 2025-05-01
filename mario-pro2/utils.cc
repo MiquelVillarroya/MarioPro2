@@ -15,6 +15,12 @@ void paint_vline(pro2::Window& window, int x, int yini, int yfin, Color color) {
     }
 }
 
+void paint_rect(pro2::Window& window, Rect rect, Color color) {
+    for (int x = rect.left; x <= rect.right; ++x)
+        for (int y = rect.top; y <= rect.bottom; ++y)
+            window.set_pixel({x, y}, color);
+}
+
 void paint_sprite(pro2::Window&              window,
                   pro2::Pt                   orig,
                   const vector<vector<int>>& sprite,

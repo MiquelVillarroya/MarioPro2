@@ -75,9 +75,16 @@ void Game::paint(pro2::Window& window) {
     mario_.paint(window);
     mario2_.paint(window);
 
+    //Uncomment to add a square in the middle of the screen :P
+    Pt mid = window.camera_center();
+    paint_rect(window, {mid.x-30,mid.y-30,mid.x+30,mid.y+30}, yellow);
+
+    //Uncoment to add a red border to the game
+    /* 
     const Rect cam = window.camera_rect();
     paint_hline(window, cam.left, cam.right, cam.top, red);
     paint_hline(window, cam.left, cam.right, cam.bottom-1, red);
     paint_vline(window, cam.left, cam.top, cam.bottom, red);
     paint_vline(window, cam.right-1, cam.top, cam.bottom, red);
+    */
 }
