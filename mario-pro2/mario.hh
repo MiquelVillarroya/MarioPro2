@@ -8,6 +8,7 @@
 
 class Mario {
  private:
+    //Physics
     pro2::Pt pos_, last_pos_;
     pro2::Pt speed_ = {0, 0};
     pro2::Pt accel_ = {0, 0};
@@ -17,10 +18,14 @@ class Mario {
 	bool looking_left_ = false;
 
 	void apply_physics_();
+
+    //Control keys
+    char left_key_, right_key_, jump_key_;
+
 	
  public:
-    Mario(pro2::Pt pos) : pos_(pos), last_pos_(pos) {}
-
+    Mario(pro2::Pt pos, char left_key, char right_key, char jump_key);
+    
     void paint(pro2::Window& window) const;
 
     pro2::Pt pos() const {
