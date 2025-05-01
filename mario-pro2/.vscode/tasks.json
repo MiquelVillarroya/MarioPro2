@@ -1,0 +1,20 @@
+{
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "Build with Makefile",
+            "command": "make",
+            "args": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": ["$gcc"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Task made by pauek :)"
+        }
+    ],
+    "version": "2.0.0"
+}
