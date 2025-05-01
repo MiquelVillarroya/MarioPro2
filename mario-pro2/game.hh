@@ -11,6 +11,7 @@ class Game {
     std::vector<Platform> platforms_;
 
     bool finished_;
+    bool paused_;
 
     void process_keys(pro2::Window& window);
     void update_objects(pro2::Window& window);
@@ -24,6 +25,9 @@ class Game {
 
     bool is_finished() const {
         return finished_;
+    }
+    bool is_paused() const {
+        return paused_;
     }
 
  private:

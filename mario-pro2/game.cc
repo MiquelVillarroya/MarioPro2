@@ -8,7 +8,8 @@ Game::Game(int width, int height)
           Platform(0, 200, 250, 261),
           Platform(250, 400, 150, 161),
       },
-      finished_(false) {
+      finished_(false),
+      paused_(false) {
     for (int i = 1; i < 20; i++) {
         platforms_.push_back(Platform(250 + i * 200, 400 + i * 200, 150, 161));
     }
@@ -18,6 +19,9 @@ void Game::process_keys(pro2::Window& window) {
     if (window.is_key_down(Keys::Escape)) {
         finished_ = true;
         return;
+    }
+    if(window.was_key_pressed('P')) {
+        paused_ = !paused_;
     }
 }
 
@@ -51,8 +55,10 @@ void Game::update_camera(pro2::Window& window) {
 
 void Game::update(pro2::Window& window) {
     process_keys(window);
-    update_objects(window);
-    update_camera(window);
+    if(!is_paused()) {
+        update_objects(window);
+        update_camera(window);
+    }
 }
 
 void Game::paint(pro2::Window& window) {

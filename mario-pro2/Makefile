@@ -24,8 +24,8 @@ HHFILES := $(wildcard *.hh)
 OBJS := $(patsubst %.cc,%.o,$(CCFILES))
 TAR_FILE = mario-pro-2-$(USER)-$(shell date +%s).tgz
 
-mario_pro_2: $(OBJS)
-	g++ -g3 -o mario_pro_2 $(OBJS) $(LDFLAGS)
+game.exe: $(OBJS)
+	g++ -g3 -o game.x $(OBJS) $(LDFLAGS)
 
 $(OBJS): $(HHFILES)
 window.o: window.cc geometry.hh fenster.h
@@ -34,6 +34,6 @@ tgz: clean
 	tar -czf $(TAR_FILE) Makefile *.cc *.hh fenster.h .vscode .clang-format
 
 clean:
-	rm -f mario_pro_2 $(OBJS)
+	rm -f game.x $(OBJS)
 
 .PHONY: clean tgz
