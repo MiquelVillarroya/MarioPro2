@@ -1,4 +1,5 @@
 #include "game.hh"
+#include "utils.hh"
 using namespace pro2;
 
 Game::Game(int width, int height)
@@ -35,7 +36,6 @@ void Game::update_camera(pro2::Window& window) {
     const Pt pos = mario_.pos();
     const Pt cam = window.camera_center();
 
-    /*
     const int left = cam.x - window.width() / 4;
     const int right = cam.x + window.width() / 4;
     const int top = cam.y - window.height() / 4;
@@ -54,9 +54,9 @@ void Game::update_camera(pro2::Window& window) {
     }
     
     window.move_camera({dx, dy});
-    */
 
-    window.move_camera({pos.x - cam.x, pos.y - cam.y});
+    //Uncomment to make the camera instantly snap into Mario (not good!)
+    //window.move_camera({pos.x - cam.x, pos.y - cam.y});
 }
 
 void Game::update(pro2::Window& window) {
@@ -74,4 +74,10 @@ void Game::paint(pro2::Window& window) {
     }
     mario_.paint(window);
     mario2_.paint(window);
+
+    const Rect cam = window.camera_rect();
+    paint_hline(window, cam.left, cam.right, cam.top, red);
+    paint_hline(window, cam.left, cam.right, cam.bottom-1, red);
+    paint_vline(window, cam.left, cam.top, cam.bottom, red);
+    paint_vline(window, cam.right-1, cam.top, cam.bottom, red);
 }
