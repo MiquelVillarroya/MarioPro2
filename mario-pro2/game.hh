@@ -13,7 +13,6 @@ class Game {
 
     bool finished_;
     bool paused_;
-    int square_;
 
     void process_keys(pro2::Window& window);
     void update_objects(pro2::Window& window);

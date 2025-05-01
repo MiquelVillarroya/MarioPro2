@@ -11,8 +11,7 @@ Game::Game(int width, int height)
           Platform(250, 400, 150, 161),
       },
       finished_(false),
-      paused_(false),
-      square_(7) {
+      paused_(false) {
     for (int i = 1; i < 20; i++) {
         platforms_.push_back(Platform(250 + i * 200, 400 + i * 200, 150, 161));
     }
@@ -31,8 +30,6 @@ void Game::process_keys(pro2::Window& window) {
 void Game::update_objects(pro2::Window& window) {
     mario_.update(window, platforms_);
     mario2_.update(window, platforms_);
-    if (square_ > 0) --square_;
-    else square_ = 15;
 }
 
 void Game::update_camera(pro2::Window& window) {
@@ -57,9 +54,6 @@ void Game::update_camera(pro2::Window& window) {
     }
     
     window.move_camera({dx, dy});
-
-    //Uncomment to make the camera instantly snap into Mario (not good!)
-    //window.move_camera({pos.x - cam.x, pos.y - cam.y});
 }
 
 void Game::update(pro2::Window& window) {
@@ -77,18 +71,4 @@ void Game::paint(pro2::Window& window) {
     }
     mario_.paint(window);
     mario2_.paint(window);
-
-    //Uncomment to add a square in the middle of the screen :P
-    Pt mid = window.camera_center();
-    if (square_ < 8)
-        paint_rect(window, {mid.x-40,mid.y-40,mid.x+40,mid.y+40}, yellow);
-
-    //Uncoment to add a red border to the game
-    /* 
-    const Rect cam = window.camera_rect();
-    paint_hline(window, cam.left, cam.right, cam.top, red);
-    paint_hline(window, cam.left, cam.right, cam.bottom-1, red);
-    paint_vline(window, cam.left, cam.top, cam.bottom, red);
-    paint_vline(window, cam.right-1, cam.top, cam.bottom, red);
-    */
 }
