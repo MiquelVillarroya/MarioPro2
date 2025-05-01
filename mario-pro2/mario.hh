@@ -36,6 +36,15 @@ class Mario {
         pos_.y = y;
     }
 
+    void set_x(int x) {
+        pos_.x = x;
+    }
+
+    void set_pos(pro2::Pt pos) {
+        pos_.x = pos.x;
+        pos_.y = pos.y;
+    }
+
     bool is_grounded() const {
         return grounded_;
     }

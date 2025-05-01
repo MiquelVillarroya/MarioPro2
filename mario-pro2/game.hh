@@ -8,7 +8,6 @@
 
 class Game {
     Mario                 mario_;
-    Mario                 mario2_;
     std::vector<Platform> platforms_;
 
     bool finished_;
