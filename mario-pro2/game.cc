@@ -35,6 +35,7 @@ void Game::update_camera(pro2::Window& window) {
     const Pt pos = mario_.pos();
     const Pt cam = window.camera_center();
 
+    /*
     const int left = cam.x - window.width() / 4;
     const int right = cam.x + window.width() / 4;
     const int top = cam.y - window.height() / 4;
@@ -51,8 +52,11 @@ void Game::update_camera(pro2::Window& window) {
     } else if (pos.y > bottom) {
         dy = pos.y - bottom;
     }
-
+    
     window.move_camera({dx, dy});
+    */
+
+    window.move_camera({pos.x - cam.x, pos.y - cam.y});
 }
 
 void Game::update(pro2::Window& window) {
