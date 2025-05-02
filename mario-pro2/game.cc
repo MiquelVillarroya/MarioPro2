@@ -1,6 +1,8 @@
 #include "game.hh"
 #include "utils.hh"
+#include <vector>
 using namespace pro2;
+using namespace std;
 
 Game::Game(int width, int height)
     : mario_({width / 2, 150}, Keys::Left, Keys::Right, Keys::Space),
@@ -10,7 +12,8 @@ Game::Game(int width, int height)
           Platform(250, 400, 150, 161),
       },
       coins_{
-        Coin ({120,120}),
+        new Coin ({120, 140}),
+        new Coin ({140, 140})
       },
       finished_(false),
       paused_(false) {
@@ -40,11 +43,11 @@ void Game::update_objects(pro2::Window& window) {
     //While the platform-player logic is managed inside player, I decided to tackler
     //the coin-player logic in the game update.
     Rect mario_rect = mario_.get_rect();
-    for (Coin& c : coins_) {
-        if (checkCollision(c.get_rect(), mario_rect)) {
+    for (Coin* c : coins_) {
+        if (checkCollision(c->get_rect(), mario_rect)) {
             mario_.update_score();
             std::cout << mario_.get_score() << " ";
-            c.unalive();
+            delete c;
         }
     }
 }
@@ -86,8 +89,33 @@ void Game::paint(pro2::Window& window) {
     for (const Platform& p : platforms_) {
         p.paint(window);
     }
-    for (const Coin& c : coins_) {
-        c.paint(window);
+    for (const Coin* c : coins_) {
+        c->paint(window);
     }
     mario_.paint(window);
+
+    //print score
+    int score = mario_.get_score();
+    Pt cam_topleft = window.topleft();
+    for (int i = 0; i < score; ++i) {
+        paint_sprite(window, {cam_topleft.x + 10*i + 5, cam_topleft.y + 5}, mini_coin_texture_);
+    }
 }
+
+const int _ = -1; //transparent
+const int b = 0x000000; //black
+const int w = 0xffffff; //white
+const int g = 0xfff93d; //gold
+const int y = 0xfadd00; //yellow
+const int o = 0xe0ac12; //orange
+
+const vector<vector<int>> Game::mini_coin_texture_ = {
+    {_, _, b, b, _, _},
+    {_, b, w, w, b, _},
+    {b, w, y, g, o, b},
+    {b, w, y, g, o, b},
+    {b, w, y, g, o, b},
+    {b, w, y, g, o, b},
+    {_, b, y, o, b, _},
+    {_, _, b, b, _, _},
+};

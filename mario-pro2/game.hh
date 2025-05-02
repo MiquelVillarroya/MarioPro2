@@ -11,7 +11,7 @@ class Game {
  private:
     Mario                 mario_;
     std::vector<Platform> platforms_;
-    std::vector<Coin>     coins_;
+    std::vector<Coin*>     coins_;
 
     bool finished_;
     bool paused_;
@@ -35,6 +35,8 @@ class Game {
 
  private:
     static constexpr int sky_blue = 0x5c94fc;
+    static const std::vector<std::vector<int>> mini_coin_texture_;
+
 };
 
 #endif

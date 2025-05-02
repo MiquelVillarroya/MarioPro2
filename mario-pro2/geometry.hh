@@ -1,6 +1,5 @@
 #ifndef GEOMETRY_HH
 #define GEOMETRY_HH
-#include <iostream>
 namespace pro2 {
 
 struct Pt {
