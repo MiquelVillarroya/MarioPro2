@@ -4,11 +4,14 @@
 #include <vector>
 #include "mario.hh"
 #include "platform.hh"
+#include "coin.hh"
 #include "window.hh"
 
 class Game {
+ private:
     Mario                 mario_;
     std::vector<Platform> platforms_;
+    std::vector<Coin>     coins_;
 
     bool finished_;
     bool paused_;

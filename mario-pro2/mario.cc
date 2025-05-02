@@ -33,7 +33,8 @@ const vector<vector<int>> Mario::mario_sprite_normal_ = {
 };
 // clang-format on
 Mario::Mario(pro2::Pt pos, char left_key, char right_key, char jump_key)
-    : pos_(pos), last_pos_(pos), left_key_(left_key), right_key_(right_key), jump_key_(jump_key) {}
+    : pos_(pos), last_pos_(pos),
+    left_key_(left_key), right_key_(right_key), jump_key_(jump_key) {}
 
 void Mario::paint(pro2::Window& window) const {
     const Pt top_left = {pos_.x - 6, pos_.y - 15};
@@ -98,4 +99,8 @@ void Mario::update(pro2::Window& window, const vector<Platform>& platforms) {
             set_y(platform.top());
         }
     }
+}
+
+void Mario::update_score() {
+    ++score_;
 }

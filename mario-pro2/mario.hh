@@ -9,7 +9,10 @@
 class Mario {
  private:
     //Physics
-    pro2::Pt pos_, last_pos_;
+    const int width = 12;
+    const int height = 16;
+
+    pro2::Pt pos_, last_pos_; //control point located at the bottom-centre of character
     pro2::Pt speed_ = {0, 0};
     pro2::Pt accel_ = {0, 0};
     int      accel_time_ = 0;
@@ -18,6 +21,9 @@ class Mario {
 	bool looking_left_ = false;
 
 	void apply_physics_();
+
+    //Gameplay
+    int score_ = 0;
 
     //Control keys
     char left_key_, right_key_, jump_key_;
@@ -30,6 +36,14 @@ class Mario {
 
     pro2::Pt pos() const {
         return pos_;
+    }
+
+    pro2::Rect get_rect() const {
+        return {pos_.x-width/2,pos_.y-height,pos_.x+width/2-1,pos_.y};
+    }
+
+    int get_score() const {
+        return score_;
     }
 
     void set_y(int y) {
@@ -63,6 +77,8 @@ class Mario {
     void jump();
 
     void update(pro2::Window& window, const std::vector<Platform>& platforms);
+
+    void update_score();
 
  private:
     static const std::vector<std::vector<int>> mario_sprite_normal_;

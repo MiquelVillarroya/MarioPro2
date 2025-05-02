@@ -9,6 +9,9 @@ Game::Game(int width, int height)
           Platform(0, 200, 250, 261),
           Platform(250, 400, 150, 161),
       },
+      coins_{
+        Coin ({120,120}),
+      },
       finished_(false),
       paused_(false) {
     for (int i = 1; i < 20; i++) {
@@ -32,6 +35,18 @@ void Game::process_keys(pro2::Window& window) {
 
 void Game::update_objects(pro2::Window& window) {
     mario_.update(window, platforms_);
+    Coin::update_spin();
+    
+    //While the platform-player logic is managed inside player, I decided to tackler
+    //the coin-player logic in the game update.
+    Rect mario_rect = mario_.get_rect();
+    for (Coin& c : coins_) {
+        if (checkCollision(c.get_rect(), mario_rect)) {
+            mario_.update_score();
+            std::cout << mario_.get_score() << " ";
+            c.unalive();
+        }
+    }
 }
 
 void Game::update_camera(pro2::Window& window) {
@@ -70,6 +85,9 @@ void Game::paint(pro2::Window& window) {
     window.clear(sky_blue);
     for (const Platform& p : platforms_) {
         p.paint(window);
+    }
+    for (const Coin& c : coins_) {
+        c.paint(window);
     }
     mario_.paint(window);
 }

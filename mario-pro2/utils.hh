@@ -49,7 +49,7 @@ void paint_rect(pro2::Window& window, Rect rect, pro2::Color color);
 void paint_sprite(pro2::Window&                        window,
                   pro2::Pt                             orig,
                   const std::vector<std::vector<int>>& sprite,
-                  bool                                 mirror);
+                  bool                                 mirror = false);
 
 }  // namespace pro2
 
