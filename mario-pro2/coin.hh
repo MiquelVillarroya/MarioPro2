@@ -5,29 +5,53 @@
 #include "geometry.hh"
 #include "window.hh"
 
+enum class movType {
+   NONE, LINEAR, CIRCULAR
+};
 
 class Coin {
  private:
-    int left_, right_, top_, bottom_;
-
-    bool alive_;
-
+    //Position logic
     static const int width = 12;
     static const int height = 16;
+    pro2::Pt centre_; //centre (bot_right)
+
+    //Spin logic
     static const int spin_vel_ = 8*5;
     static int spin_counter_;
 
+    //Although some coins don't move, they will have to contain this move-related members
+    //This could be avoided and possibly better implemented with inheritance 
+
+    //Movement
+    bool it_moves_;
+    movType type_ = movType::NONE;
+    float mov_speed_ = 0;
+
+    float dist_ = 0;
+
+    //Circular
+    pro2::Pt mov_point_ = {0,0}; //centre of rotation in circular mov
+    float angle_ = 0.0;
+
+    //Linear
+    pro2::Pt init_pos_ = {0,0};
+    pro2::Pt dir_ = {0,0};
+    bool forward_ = true;
+    
+
  public:
     Coin(pro2::Pt pos);
+    Coin(pro2::Pt pos, movType type, pro2::Pt mov_point, float mov_speed_ = 0.1);
 
     static void update_spin();
 
+    void update();
+
     void paint(pro2::Window& window) const;
     pro2::Rect get_rect() const {
-        return {left_, top_, right_, bottom_};
+        return {centre_.x-width/2, centre_.y-height/2, centre_.x+width/2-1, centre_.y+height/2-1};
     }
-
-    void unalive();
 
  private:
     static const std::vector<std::vector<int>> coin_texture_1_;

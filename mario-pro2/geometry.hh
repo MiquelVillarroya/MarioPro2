@@ -1,5 +1,7 @@
 #ifndef GEOMETRY_HH
 #define GEOMETRY_HH
+#include <cmath>
+
 namespace pro2 {
 
 struct Pt {
@@ -34,6 +36,10 @@ struct Rect {
 inline bool checkCollision(const pro2::Rect& a, const pro2::Rect& b) {
     return (a.left <= b.right and b.left <= a.right
             and a.top <= b.bottom and b.top <= a.bottom);
+}
+
+inline float vecNorm(const pro2::Pt& vec) {
+    return sqrt(pow(vec.x, 2) + pow(vec.y, 2));
 }
 
 #endif

@@ -9,16 +9,22 @@ Game::Game(int width, int height)
       platforms_{
           Platform(100, 300, 200, 211),
           Platform(0, 200, 250, 261),
-          Platform(250, 400, 150, 161),
+          //Platform(250, 400, 150, 161),
       },
       coins_{
-        new Coin ({120, 140}),
-        new Coin ({140, 140})
       },
       finished_(false),
       paused_(false) {
-    for (int i = 1; i < 20; i++) {
+    for (int i = 0; i < 20; i++) {
         platforms_.push_back(Platform(250 + i * 200, 400 + i * 200, 150, 161));
+        coins_.push_back(new Coin({300-1 + i*200, 70}, movType::CIRCULAR, {325 + i*200, 70}));
+        coins_.push_back(new Coin({350 + i*200, 70}, movType::CIRCULAR, {325 + i*200, 70}));
+        coins_.push_back(new Coin({325 + i*200, 45-1}, movType::CIRCULAR, {325 + i*200, 70}));
+        coins_.push_back(new Coin({325 + i*200, 95}, movType::CIRCULAR, {325 + i*200, 70}));
+        if (i%2 == 0)
+            coins_.push_back(new Coin({425+i*200, 50}, movType::LINEAR, {425 + i*200, 80}));
+        else 
+            coins_.push_back(new Coin({375+i*200, 70}, movType::LINEAR, {450 + i*200, 70}));
     }
 }
 
@@ -36,19 +42,26 @@ void Game::process_keys(pro2::Window& window) {
     }
 }
 
-void Game::update_objects(pro2::Window& window) {
+void Game::update_objects(pro2::Window& window) {    //While the platform-player logic is managed inside player, other logic will be managed here
+    //Update objects
     mario_.update(window, platforms_);
+    for (Coin* c : coins_) {
+        c->update();
+    }
     Coin::update_spin();
     
-    //While the platform-player logic is managed inside player, I decided to tackler
-    //the coin-player logic in the game update.
+
+    //Check for collisions
     Rect mario_rect = mario_.get_rect();
-    for (Coin* c : coins_) {
-        if (checkCollision(c->get_rect(), mario_rect)) {
+    auto it = coins_.begin();
+    while (it != coins_.end()) {
+        if (checkCollision((*it)->get_rect(), mario_rect)) {
             mario_.update_score();
             std::cout << mario_.get_score() << " ";
-            delete c;
+            delete *it;
+            it = coins_.erase(it);
         }
+        else ++it;
     }
 }
 

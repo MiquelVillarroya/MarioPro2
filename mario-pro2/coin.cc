@@ -1,42 +1,76 @@
 #include "coin.hh"
 #include "utils.hh"
+#include <cmath>
+#include <iostream>
 using namespace pro2;
 using namespace std;
 
 int Coin::spin_counter_ = spin_vel_;
 
-Coin::Coin(pro2::Pt pos)
-    : left_(pos.x), top_(pos.y), right_(pos.x + width), bottom_ (pos.y + width),
-    alive_(true) {}
+Coin::Coin(pro2::Pt pos) : centre_(pos), it_moves_(false) {}
+
+Coin::Coin(pro2::Pt pos, movType type, pro2::Pt mov_point, float speed)
+    : centre_(pos), it_moves_(true), type_(type), mov_point_(mov_point), init_pos_(centre_), mov_speed_(speed) {
+        if (type_ == movType::LINEAR) {
+            dir_ = {mov_point.x - centre_.x, mov_point.y - centre_.y};
+            dist_ = 0;
+        }
+        else if (type_ == movType::CIRCULAR) {
+            angle_ = atan2(centre_.y - mov_point_.y, centre_.x - mov_point_.x); //angle coin_centre - rotating_point
+            dist_ = vecNorm({centre_.x - mov_point_.x, centre_.y - mov_point_.y}); //distance coin_centre - rotating_point
+        }
+}
 
 void Coin::update_spin() {
     --spin_counter_;
     if (spin_counter_ <= 0) spin_counter_ = spin_vel_;
 }
 
-void Coin::unalive() {
-    alive_ = false;
+void Coin::update() {
+    if (it_moves_) {
+        if (type_ == movType::LINEAR) {
+            //Movement direction
+            if (dist_ >= 1) forward_ = false;
+            else if (dist_ <= 0) forward_ = true;
+
+            //Update distance
+            if (forward_) dist_ += 0.025;
+            else dist_ -= 0.025;
+
+            //Update position
+            centre_.x = init_pos_.x + dir_.x * dist_;
+            centre_.y = init_pos_.y + dir_.y * dist_;
+        }
+        else if (type_ == movType::CIRCULAR) {
+            //Update angle
+            angle_ += 0.05;
+            if (angle_ >= 2*M_PI) angle_ = 0.0;
+
+            //Update position
+            centre_.x = mov_point_.x + dist_ * cos(angle_);
+            centre_.y = mov_point_.y + dist_ * sin(angle_);
+        }
+    }
 }
 
 void Coin::paint(pro2::Window& window) const {
-    if (alive_) {
+    Pt topleft_ = {centre_.x-width/2, centre_.y-height/2,};
     if (spin_counter_ > spin_vel_*(0.875))
-        paint_sprite(window, {left_, top_}, coin_texture_1_);
+        paint_sprite(window, topleft_, coin_texture_1_);
     else if (spin_counter_ > spin_vel_*(0.75))
-        paint_sprite(window, {left_, top_}, coin_texture_2_);
+        paint_sprite(window, topleft_, coin_texture_2_);
     else if (spin_counter_ > spin_vel_*(0.625))
-        paint_sprite(window, {left_, top_}, coin_texture_3_);
+        paint_sprite(window, topleft_, coin_texture_3_);
     else if (spin_counter_ > spin_vel_*(0.5))
-        paint_sprite(window, {left_, top_}, coin_texture_4_);
+        paint_sprite(window, topleft_, coin_texture_4_);
     else if (spin_counter_ > spin_vel_*(0.375))
-        paint_sprite(window, {left_, top_}, coin_texture_5_);
+        paint_sprite(window, topleft_, coin_texture_5_);
     else if (spin_counter_ > spin_vel_*(0.25))
-        paint_sprite(window, {left_, top_}, coin_texture_4_);
+        paint_sprite(window, topleft_, coin_texture_4_);
     else if (spin_counter_ > spin_vel_*(0.125))
-        paint_sprite(window, {left_, top_}, coin_texture_3_);
+        paint_sprite(window, topleft_, coin_texture_3_);
     else 
-        paint_sprite(window, {left_, top_}, coin_texture_2_);
-    }
+        paint_sprite(window, topleft_, coin_texture_2_);
 }
 
 
