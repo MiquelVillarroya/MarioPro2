@@ -38,6 +38,13 @@ inline bool checkCollision(const pro2::Rect& a, const pro2::Rect& b) {
             and a.top <= b.bottom and b.top <= a.bottom);
 }
 
+/**
+ * @brief Returns the euclidian norm (length) of a vector
+ * 
+ * @param p1 Point treated as a vector (origin point does not matter as we only compute the distance)
+ * 
+ * @returns Distance from (0,0) to the point, that corresponds to the length of the vector
+ */
 inline float vecNorm(const pro2::Pt& vec) {
     return sqrt(pow(vec.x, 2) + pow(vec.y, 2));
 }

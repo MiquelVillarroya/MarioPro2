@@ -57,7 +57,7 @@ void Game::update_objects(pro2::Window& window) {    //While the platform-player
     while (it != coins_.end()) {
         if (checkCollision((*it)->get_rect(), mario_rect)) {
             mario_.update_score();
-            std::cout << mario_.get_score() << " ";
+            std::cout << "Mario score: "<< mario_.get_score() << endl;
             delete *it;
             it = coins_.erase(it);
         }
