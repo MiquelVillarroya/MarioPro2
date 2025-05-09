@@ -44,6 +44,11 @@ class Coin {
     Coin(pro2::Pt pos);
     Coin(pro2::Pt pos, movType type, pro2::Pt mov_point, float mov_speed_ = 0.1);
 
+    /**
+   * @brief Updates the `spin_counter_` that controls the spin aimation of all coins.
+   * Invariant: `1 <= spin_counter_ <= spin_vel_`
+   * @returns The `spin_counter_` variable updated to continue the spin animation
+   */
     static void update_spin();
 
     void update();
