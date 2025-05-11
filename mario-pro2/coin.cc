@@ -10,12 +10,12 @@ int Coin::spin_counter_ = spin_vel_;
 Coin::Coin(pro2::Pt pos) : centre_(pos), it_moves_(false) {}
 
 Coin::Coin(pro2::Pt pos, movType type, pro2::Pt mov_point, float speed)
-    : centre_(pos), it_moves_(true), type_(type), mov_point_(mov_point), init_pos_(centre_), mov_speed_(speed) {
-        if (type_ == movType::LINEAR) {
+    : centre_(pos), it_moves_(true), mov_type_(type), mov_point_(mov_point), init_pos_(centre_), mov_speed_(speed) {
+        if (mov_type_ == movType::LINEAR) {
             dir_ = {mov_point.x - centre_.x, mov_point.y - centre_.y};
             dist_ = 0;
         }
-        else if (type_ == movType::CIRCULAR) {
+        else if (mov_type_ == movType::CIRCULAR) {
             angle_ = atan2(centre_.y - mov_point_.y, centre_.x - mov_point_.x); //angle coin_centre - rotating_point
             dist_ = vecNorm({centre_.x - mov_point_.x, centre_.y - mov_point_.y}); //distance coin_centre - rotating_point
         }
@@ -28,7 +28,7 @@ void Coin::update_spin() {
 
 void Coin::update() {
     if (it_moves_) {
-        if (type_ == movType::LINEAR) {
+        if (mov_type_ == movType::LINEAR) {
             //Movement direction
             if (dist_ >= 1) forward_ = false;
             else if (dist_ <= 0) forward_ = true;
@@ -41,7 +41,7 @@ void Coin::update() {
             centre_.x = init_pos_.x + dir_.x * dist_;
             centre_.y = init_pos_.y + dir_.y * dist_;
         }
-        else if (type_ == movType::CIRCULAR) {
+        else if (mov_type_ == movType::CIRCULAR) {
             //Update angle
             angle_ += 0.05;
             if (angle_ >= 2*M_PI) angle_ = 0.0;
