@@ -56,7 +56,7 @@ class Coin {
      * If `mov_type_ == movType::CIRCULAR` the `angle_` of rotation is incresed and the position `centre_` is updated according to it.
      * If `mov_type_ == movType::LINEAR` the `dist_` updated (`0 <= dist_ <= 1`) that determines the position of the coin between
      * the inital and final position, and the coin position `centre_` is updated according to it.
-     */`
+     */
     void update();
 
    /**
