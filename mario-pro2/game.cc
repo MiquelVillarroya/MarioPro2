@@ -6,16 +6,11 @@ using namespace std;
 
 Game::Game(int width, int height)
     : mario_({width / 2, 150}, Keys::Left, Keys::Right, Keys::Space),
-      platforms_{
-          Platform(100, 300, 200, 211),
-          Platform(0, 200, 250, 261),
-          //Platform(250, 400, 150, 161),
-      },
-      coins_{
-      },
-      finished_(false),
-      paused_(false) {
-    for (int i = 0; i < 20; i++) {
+      finished_(false), paused_(false){
+    platforms_.push_back(Platform(100, 300, 200, 211));
+    platforms_.push_back(Platform(0, 200, 250, 261));
+
+    for (int i = 0; i < 200; i++) {
         platforms_.push_back(Platform(250 + i * 200, 400 + i * 200, 150, 161));
         coins_.push_back(new Coin({300-1 + i*200, 70}, movType::CIRCULAR, {325 + i*200, 70}));
         coins_.push_back(new Coin({350 + i*200, 70}, movType::CIRCULAR, {325 + i*200, 70}));
@@ -26,6 +21,8 @@ Game::Game(int width, int height)
         else 
             coins_.push_back(new Coin({375+i*200, 70}, movType::LINEAR, {450 + i*200, 70}));
     }
+    plat_finder_ = Finder<Platform>(platforms_);
+    coin_finder_ = Finder<Coin> (coins_);
 }
 
 void Game::process_keys(pro2::Window& window) {
@@ -99,12 +96,17 @@ void Game::update(pro2::Window& window) {
 
 void Game::paint(pro2::Window& window) {
     window.clear(sky_blue);
-    for (const Platform& p : platforms_) {
-        p.paint(window);
+
+    set<const Platform*> sPlat = plat_finder_.query(window.camera_rect());
+    for (const Platform* p : sPlat) {
+        p->paint(window);
     }
-    for (const Coin* c : coins_) {
+
+    set<const Coin*> sCoin = coin_finder_.query(window.camera_rect());
+    for (const Coin* c : sCoin) {
         c->paint(window);
     }
+
     mario_.paint(window);
 
     //print score

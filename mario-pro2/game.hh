@@ -6,12 +6,17 @@
 #include "platform.hh"
 #include "coin.hh"
 #include "window.hh"
+#include "finder.hh"
 
 class Game {
  private:
-    Mario                 mario_;
+    Mario mario_;
+
     std::vector<Platform> platforms_;
-    std::vector<Coin*>     coins_;
+    Finder<Platform> plat_finder_;
+    
+    std::vector<Coin*> coins_;
+    Finder<Coin> coin_finder_;
 
     bool finished_;
     bool paused_;
