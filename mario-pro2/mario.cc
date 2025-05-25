@@ -70,7 +70,7 @@ void Mario::jump() {
     }
 }
 
-void Mario::update(pro2::Window& window, const vector<Platform>& platforms) {
+void Mario::update(pro2::Window& window, const set<const Platform*>& platforms) {
     last_pos_ = pos_;
     if (window.is_key_down(jump_key_)) {
         jump();
@@ -93,10 +93,10 @@ void Mario::update(pro2::Window& window, const vector<Platform>& platforms) {
     // Check position
     set_grounded(false);
 
-    for (const Platform& platform : platforms) {
-        if (platform.has_crossed_floor_downwards(last_pos_, pos_)) {
+    for (const Platform* platform : platforms) {
+        if ((*platform).has_crossed_floor_downwards(last_pos_, pos_)) {
             set_grounded(true);
-            set_y(platform.top());
+            set_y((*platform).top());
         }
     }
 }

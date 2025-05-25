@@ -60,12 +60,12 @@ class Finder {
 
  public:
     Finder() : grid(CELL_NUM, Row(CELL_NUM)) {}
-    Finder(const std::vector<T>& v) : grid(CELL_NUM, Row(CELL_NUM)) {
+    Finder(const std::list<T>& v) : grid(CELL_NUM, Row(CELL_NUM)) {
         for (const auto& obj: v) {
             add(&obj);
         }
     }
-    Finder(const std::vector<T*>& v) : grid(CELL_NUM, Row(CELL_NUM)) {
+    Finder(const std::list<T*>& v) : grid(CELL_NUM, Row(CELL_NUM)) {
         for (const auto& obj: v) {
             add(obj);
         }

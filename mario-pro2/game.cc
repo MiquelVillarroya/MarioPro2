@@ -41,7 +41,10 @@ void Game::process_keys(pro2::Window& window) {
 
 void Game::update_objects(pro2::Window& window) {    //While the platform-player logic is managed inside player, other logic will be managed here
     //Update objects
-    mario_.update(window, platforms_);
+
+    set<const Platform*> nearby_plat = plat_finder_.query(window.camera_rect());
+    mario_.update(window, nearby_plat);
+
     for (Coin* c : coins_) {
         c->update();
     }
@@ -97,13 +100,13 @@ void Game::update(pro2::Window& window) {
 void Game::paint(pro2::Window& window) {
     window.clear(sky_blue);
 
-    set<const Platform*> sPlat = plat_finder_.query(window.camera_rect());
-    for (const Platform* p : sPlat) {
+    set<const Platform*> nearby_plat = plat_finder_.query(window.camera_rect());
+    for (const Platform* p : nearby_plat) {
         p->paint(window);
     }
 
-    set<const Coin*> sCoin = coin_finder_.query(window.camera_rect());
-    for (const Coin* c : sCoin) {
+    set<const Coin*> nearby_coin = coin_finder_.query(window.camera_rect());
+    for (const Coin* c : nearby_coin) {
         c->paint(window);
     }
 

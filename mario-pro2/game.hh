@@ -1,7 +1,7 @@
 #ifndef GAME_HH
 #define GAME_HH
 
-#include <vector>
+#include <list>
 #include "mario.hh"
 #include "platform.hh"
 #include "coin.hh"
@@ -12,10 +12,10 @@ class Game {
  private:
     Mario mario_;
 
-    std::vector<Platform> platforms_;
+    std::list<Platform> platforms_;
     Finder<Platform> plat_finder_;
     
-    std::vector<Coin*> coins_;
+    std::list<Coin*> coins_;
     Finder<Coin> coin_finder_;
 
     bool finished_;

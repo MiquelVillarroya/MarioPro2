@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <set>
 #include "platform.hh"
 #include "window.hh"
 
@@ -76,7 +77,7 @@ class Mario {
 
     void jump();
 
-    void update(pro2::Window& window, const std::vector<Platform>& platforms);
+    void update(pro2::Window& window, const std::set<const Platform*>& platforms);
 
     void update_score();
 
