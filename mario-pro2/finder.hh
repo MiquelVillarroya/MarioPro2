@@ -28,19 +28,6 @@ class Finder {
     std::unordered_map<const T*, pro2::Rect> idRect; //Map pointers-rectangles (doesn't require order)
 
     /**
-    * @brief Check if two rectangles are intersecting. 
-    * 
-    * @param r1 First rectangle
-    * @param r2 Second rectangle
-    * 
-    * @returns `true` if the rectangles intersect, `false` otherwise.
-    */
-    static bool checkCollision(const pro2::Rect& a, const pro2::Rect& b) {
-    return (a.left <= b.right and b.left <= a.right
-            and a.top <= b.bottom and b.top <= a.bottom);
-    }
-
-    /**
     * @brief Normalizes a rectangle according to `CELL_SIZE`, giving the index cell of it's position. 
     * The far right and bottom border are included in the last cell.
     * 

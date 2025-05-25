@@ -55,16 +55,18 @@ void Game::update_objects(pro2::Window& window) {    //While the platform-player
 
     //Check for collisions
     Rect mario_rect = mario_.get_rect();
-    auto it = coins_.begin();
-    while (it != coins_.end()) {
+    set<const Coin*> nearby_coins = coin_finder_.query(window.camera_rect());
+    auto it = nearby_coins.begin();
+    while (it != nearby_coins.end()) {
         if (checkCollision((*it)->get_rect(), mario_rect)) {
-            mario_.update_score();
             coin_finder_.remove(*it);
+            coins_.remove(const_cast<Coin*>(*it)); //Only instance of needing a non-const Finder, not worth changing for only this occasion
             delete *it;
-            it = coins_.erase(it);
+
+            mario_.update_score();
             std::cout << "Mario score: "<< mario_.get_score() << endl;
         }
-        else ++it;
+        ++it;
     }
 }
 
