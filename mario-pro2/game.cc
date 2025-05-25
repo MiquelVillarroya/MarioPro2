@@ -10,7 +10,7 @@ Game::Game(int width, int height)
     platforms_.push_back(Platform(100, 300, 200, 211));
     platforms_.push_back(Platform(0, 200, 250, 261));
 
-    for (int i = 0; i < 200; i++) {
+    for (int i = 0; i < 100; i++) {
         platforms_.push_back(Platform(250 + i * 200, 400 + i * 200, 150, 161));
         coins_.push_back(new Coin({300-1 + i*200, 70}, movType::CIRCULAR, {325 + i*200, 70}));
         coins_.push_back(new Coin({350 + i*200, 70}, movType::CIRCULAR, {325 + i*200, 70}));
@@ -45,8 +45,10 @@ void Game::update_objects(pro2::Window& window) {    //While the platform-player
     set<const Platform*> nearby_plat = plat_finder_.query(window.camera_rect());
     mario_.update(window, nearby_plat);
 
+    //all coins are updated (not only those in the window) because if not, the coin circles will desynchronize
     for (Coin* c : coins_) {
         c->update();
+        coin_finder_.update(c);
     }
     Coin::update_spin();
     
@@ -57,9 +59,10 @@ void Game::update_objects(pro2::Window& window) {    //While the platform-player
     while (it != coins_.end()) {
         if (checkCollision((*it)->get_rect(), mario_rect)) {
             mario_.update_score();
-            std::cout << "Mario score: "<< mario_.get_score() << endl;
+            coin_finder_.remove(*it);
             delete *it;
             it = coins_.erase(it);
+            std::cout << "Mario score: "<< mario_.get_score() << endl;
         }
         else ++it;
     }

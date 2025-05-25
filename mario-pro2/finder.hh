@@ -17,8 +17,8 @@ template <class T>
 class Finder {
  private:
 
-    static const int SIZE = 60000;
-    static const int CELL_SIZE = 2000;
+    static const int SIZE = 40000;
+    static const int CELL_SIZE = 4000;
     //make sure that SIZE and CELL_SIZE are always perfectly divisible
     static const int CELL_NUM = SIZE/CELL_SIZE;
 
