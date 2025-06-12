@@ -24,13 +24,18 @@ void paint_rect(pro2::Window& window, Rect rect, Color color) {
 void paint_sprite(pro2::Window&              window,
                   pro2::Pt                   orig,
                   const vector<vector<int>>& sprite,
-                  bool                       mirror) {
+                  bool                       mirror,
+                  pro2::Color                col    ) {
     for (int i = 0; i < sprite.size(); i++) {
         const vector<int>& line = sprite[i];
         for (int j = 0; j < line.size(); j++) {
             const int _j = mirror ? line.size() - j - 1 : j;
             if (line[_j] >= 0) {
                 window.set_pixel({orig.x + j, orig.y + i}, line[_j]);
+            }
+            else if (line[_j] == -2) {
+                window.set_pixel({orig.x + j, orig.y + i}, col);
+
             }
         }
     }

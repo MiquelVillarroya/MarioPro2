@@ -7,6 +7,7 @@
 #include "coin.hh"
 #include "window.hh"
 #include "finder.hh"
+#include "text.hh"
 
 class Game {
  private:
@@ -24,6 +25,8 @@ class Game {
     void process_keys(pro2::Window& window);
     void update_objects(pro2::Window& window);
     void update_camera(pro2::Window& window);
+
+    Text text_;
 
  public:
     Game(int width, int height);

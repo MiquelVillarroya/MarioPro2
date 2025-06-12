@@ -1,6 +1,8 @@
 #include "game.hh"
 #include "utils.hh"
+#include "text.hh"
 #include <vector>
+
 using namespace pro2;
 using namespace std;
 
@@ -123,6 +125,8 @@ void Game::paint(pro2::Window& window) {
     for (int i = 0; i < score; ++i) {
         paint_sprite(window, {cam_topleft.x + 10*i + 5, cam_topleft.y + 5}, mini_coin_texture_);
     }
+    text_.paint_phrase(window,10,10,"abcdefghijklmnopqrstuvwxyz");
+    text_.paint_number(window,10,20,1234567890);
 }
 
 const int _ = -1; //transparent

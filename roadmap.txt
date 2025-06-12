@@ -1,0 +1,6 @@
+ToDo:
+- Timer:
+- Traps
+- Enemy
+- Final goal (rescue Jutge)
+- Text font
