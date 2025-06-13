@@ -21,7 +21,7 @@ void Timer::update() {
 
 void Timer::paint(pro2::Window& window, Pt pos, Color col) const {
     paint_sprite(window, pos, clock_texture_);
-    text_->paint_number(window, pos, sec_ctr_, col);
+    text_->paint_number(window, {pos.x+12, pos.y+2}, sec_ctr_, col);
 }
 
 const int b = black;

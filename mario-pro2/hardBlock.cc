@@ -6,12 +6,7 @@
 using namespace pro2;
 
 void HardBlock::paint(pro2::Window& window) const {
-    if (block_type_ == blockType::BLOCK) {
-        paint_sprite(window, {left_, top_}, block_texture_);
-    }
-    else if (block_type_ == blockType::TERRAIN) {
-        std::cout << "terrain";
-    }
+    paint_sprite(window, {left_, top_}, block_texture_);
 }
 
 bool HardBlock::has_crossed_block_downwards(pro2::Pt plast, pro2::Pt pcurr) const {
@@ -56,8 +51,4 @@ const Sprite HardBlock::block_texture_ = {
     {p,p,b,s,s,s,s,s,s,s,s,s,s,o,s,s},
     {p,b,s,s,s,s,s,s,s,s,s,s,s,s,o,s},
     {b,s,s,s,s,s,s,s,s,s,s,s,s,s,s,o}
-};
-
-const Sprite HardBlock::terrain_texture_ = {
-    {}
 };

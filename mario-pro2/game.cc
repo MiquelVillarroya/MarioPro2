@@ -138,7 +138,7 @@ void Game::paint(pro2::Window& window) {
     text_->paint_char(window, cam_topleft + Pt{space, 5}, 'x');
     space += 9;
     text_->paint_number(window, cam_topleft + Pt{space, 5}, score);
-    timer_.paint(window, cam_topleft + Pt{window.width() - space,0});
+    timer_.paint(window, cam_topleft + Pt{window.width() - 40, 3});
 }
 
 const int _ = -1; //transparent

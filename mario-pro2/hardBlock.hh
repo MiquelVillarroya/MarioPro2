@@ -4,30 +4,25 @@
 #include "window.hh"
 #include "globals.hh"
 
-enum class blockType {
-    TERRAIN, BLOCK
-};
+
 
 class HardBlock {
     private:
     int left_, right_, top_, bottom_;
 
-    blockType block_type_;
     static const int block_width_ = 16;
     static const int block_height_ = 16;
 
     static const Sprite block_texture_;
-    static const Sprite terrain_texture_;
-
     
     public:
-        HardBlock() : block_type_(blockType::TERRAIN), left_(0), right_(0), top_(0), bottom_(0) {}
+        HardBlock() :  left_(0), right_(0), top_(0), bottom_(0) {}
         
         HardBlock(pro2::Pt pos) : left_(pos.x), right_(pos.x+block_width_-1),
-        top_(pos.y), bottom_(pos.y+block_height_-1), block_type_(blockType::BLOCK) {}
+        top_(pos.y), bottom_(pos.y+block_height_-1){}
 
         HardBlock(int left, int right, int top, int bottom)
-            : left_(left), right_(right), top_(top), bottom_(bottom), block_type_(blockType::TERRAIN) {}
+            : left_(left), right_(right), top_(top), bottom_(bottom) {}
 
         void paint(pro2::Window& window) const;
 
