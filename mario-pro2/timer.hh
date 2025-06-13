@@ -11,14 +11,14 @@ class Timer {
 
         Text* text_;
         
-        static const Sprite clock_;
+        static const Sprite clock_texture_;
     public:
 
         Timer(Text* text);
         Timer(Text* text, int time);
 
         void update();
-        void paint(pro2::Window& window, int x, int y, pro2::Color col = pro2::black) const;
+        void paint(pro2::Window& window, pro2::Pt pos, pro2::Color col = pro2::black) const;
 };
 
 #endif

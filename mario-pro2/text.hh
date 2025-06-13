@@ -18,9 +18,9 @@ class Text {
     public:
         Text() {};
         
-        void paint_char(pro2::Window& window, int x, int y, char c, pro2::Color col = pro2::black) const;
-        void paint_phrase(pro2::Window& window, int x, int y, std::string phrase, pro2::Color col = pro2::black) const;
-        void paint_number(pro2::Window& window, int x, int y, int n, pro2::Color col = pro2::black) const;
+        void paint_char(pro2::Window& window, pro2::Pt pos, char c, pro2::Color col = pro2::black) const;
+        void paint_phrase(pro2::Window& window, pro2::Pt pos, std::string phrase, pro2::Color col = pro2::black) const;
+        void paint_number(pro2::Window& window, pro2::Pt pos, int n, pro2::Color col = pro2::black) const;
         
         int get_width() {
             return char_width_;

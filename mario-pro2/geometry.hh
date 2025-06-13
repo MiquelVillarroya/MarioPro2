@@ -8,6 +8,10 @@ struct Pt {
     int x = 0, y = 0;
 };
 
+inline Pt operator +(const Pt& a, const Pt&b) {
+    return {a.x + b.x, a.y + b.y};
+}
+
 /**
  * @brief Compara dos punts del pla
  * 

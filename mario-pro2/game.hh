@@ -9,6 +9,7 @@
 #include "finder.hh"
 #include "text.hh"
 #include "timer.hh"
+#include "hardBlock.hh"
 
 class Game {
  private:
@@ -16,6 +17,9 @@ class Game {
 
     std::list<Platform> platforms_;
     Finder<Platform> plat_finder_;
+
+    std::list<HardBlock> hard_blocks_;
+    Finder<HardBlock> hard_block_finder;
     
     std::list<Coin*> coins_;
     Finder<Coin> coin_finder_;

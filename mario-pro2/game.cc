@@ -13,6 +13,8 @@ Game::Game(int width, int height)
       text_(new Text), timer_(text_) {
     platforms_.push_back(Platform(100, 300, 200, 211));
     platforms_.push_back(Platform(0, 200, 250, 261));
+    //test
+    hard_blocks_.push_back(HardBlock({200,180}));
 
     for (int i = 0; i < 100; i++) {
         platforms_.push_back(Platform(250 + i * 200, 400 + i * 200, 150, 161));
@@ -26,6 +28,7 @@ Game::Game(int width, int height)
             coins_.push_back(new Coin({375+i*200, 70}, movType::LINEAR, {450 + i*200, 70}));
     }
     plat_finder_ = Finder<Platform>(platforms_);
+    hard_block_finder = Finder<HardBlock>(hard_blocks_);
     coin_finder_ = Finder<Coin> (coins_);
 }
 
@@ -46,8 +49,9 @@ void Game::process_keys(pro2::Window& window) {
 void Game::update_objects(pro2::Window& window) {    //While the platform-player logic is managed inside player, other logic will be managed here
     //Update objects
 
-    set<const Platform*> nearby_plat = plat_finder_.query(window.camera_rect());
-    mario_.update(window, nearby_plat);
+    auto nearby_plat = plat_finder_.query(window.camera_rect());
+    auto nearby_hard_blocks = hard_block_finder.query(window.camera_rect());
+    mario_.update(window, nearby_plat, nearby_hard_blocks);
 
     //all coins are updated (not only those in the window) because if not, the coin circles will desynchronize
     for (Coin* c : coins_) {
@@ -59,18 +63,16 @@ void Game::update_objects(pro2::Window& window) {    //While the platform-player
 
     //Check for collisions
     Rect mario_rect = mario_.get_rect();
-    set<const Coin*> nearby_coins = coin_finder_.query(window.camera_rect());
-    auto it = nearby_coins.begin();
-    while (it != nearby_coins.end()) {
-        if (checkCollision((*it)->get_rect(), mario_rect)) {
-            coin_finder_.remove(*it);
-            coins_.remove(const_cast<Coin*>(*it)); //Only instance of needing a non-const Finder, not worth changing for only this occasion
-            delete *it;
-
+    auto nearby_coins = coin_finder_.query(window.camera_rect());
+    auto itc = nearby_coins.begin();
+    while (itc != nearby_coins.end()) {
+        if (checkCollision((*itc)->get_rect(), mario_rect)) {
+            coin_finder_.remove(*itc);
+            coins_.remove(const_cast<Coin*>(*itc)); //Only instance of needing a non-const Finder, not worth changing for only this occasion
+            delete *itc;
             mario_.update_score();
-            std::cout << "Mario score: "<< mario_.get_score() << endl;
         }
-        ++it;
+        ++itc;
     }
 }
 
@@ -110,27 +112,33 @@ void Game::update(pro2::Window& window) {
 void Game::paint(pro2::Window& window) {
     window.clear(sky_blue);
 
-    set<const Platform*> nearby_plat = plat_finder_.query(window.camera_rect());
-    for (const Platform* p : nearby_plat) {
+    auto nearby_plat = plat_finder_.query(window.camera_rect());
+    for (auto p : nearby_plat) {
         p->paint(window);
     }
 
-    set<const Coin*> nearby_coin = coin_finder_.query(window.camera_rect());
-    for (const Coin* c : nearby_coin) {
+    auto nearby_coin = coin_finder_.query(window.camera_rect());
+    for (auto c : nearby_coin) {
         c->paint(window);
     }
 
+    auto nearby_hard_blocks = hard_block_finder.query(window.camera_rect());
+    for (auto hb : nearby_hard_blocks) {
+        hb->paint(window);
+    }
     mario_.paint(window);
 
     //print score
     int score = mario_.get_score();
     Pt cam_topleft = window.topleft();
-    for (int i = 0; i < score; ++i) {
-        paint_sprite(window, {cam_topleft.x + 10*i + 5, cam_topleft.y + 5}, mini_coin_texture_);
-    }
-    text_->paint_phrase(window,10,10,"abcdefghijklmnopqrstuvwxyz");
-    text_->paint_number(window,10,20,1234567890);
-    timer_.paint(window, 50, 50);
+    int space = 10;
+
+    paint_sprite(window, cam_topleft + Pt{space, 3}, mini_coin_texture_);
+    space += 10;
+    text_->paint_char(window, cam_topleft + Pt{space, 5}, 'x');
+    space += 9;
+    text_->paint_number(window, cam_topleft + Pt{space, 5}, score);
+    timer_.paint(window, cam_topleft + Pt{window.width() - space,0});
 }
 
 const int _ = -1; //transparent
@@ -141,12 +149,14 @@ const int y = 0xfadd00; //yellow
 const int o = 0xe0ac12; //orange
 
 const vector<vector<int>> Game::mini_coin_texture_ = {
-    {_, _, b, b, _, _},
-    {_, b, w, w, b, _},
-    {b, w, y, g, o, b},
-    {b, w, y, g, o, b},
-    {b, w, y, g, o, b},
-    {b, w, y, g, o, b},
-    {_, b, y, o, b, _},
-    {_, _, b, b, _, _},
+    {_, _, b, b, b, _, _, _},
+    {_, b, w, w, w, b, _, _},
+    {b, w, y, y, b, o, b, _},
+    {b, w, y, g, b, o, b, _},
+    {b, w, y, g, b, o, b, _},
+    {b, w, y, g, b, o, b, _},
+    {b, w, y, g, b, o, b, _},
+    {b, w, y, b, o, o, b, _},
+    {_, b, o, o, o, b, _, _},
+    {_, _, b, b, b, _, _, _},
 };

@@ -70,8 +70,10 @@ void Mario::jump() {
     }
 }
 
-void Mario::update(pro2::Window& window, const set<const Platform*>& platforms) {
+void Mario::update(pro2::Window& window, const set<const Platform*>& platforms,
+    const set<const HardBlock*>& hard_blocks) {
     last_pos_ = pos_;
+
     if (window.is_key_down(jump_key_)) {
         jump();
     }
@@ -93,10 +95,33 @@ void Mario::update(pro2::Window& window, const set<const Platform*>& platforms) 
     // Check position
     set_grounded(false);
 
-    for (const Platform* platform : platforms) {
-        if ((*platform).has_crossed_floor_downwards(last_pos_, pos_)) {
+    for (auto platform : platforms) {
+        if (platform->has_crossed_floor_downwards(last_pos_, pos_)) {
             set_grounded(true);
-            set_y((*platform).top());
+            set_y(platform->top());
+        }
+    }
+
+    last_pos_top_ = last_pos_ + Pt{0, -height+1};
+    pos_top_ = pos_ + Pt{0, -height+1};
+    last_pos_right_ = last_pos_ + Pt{width/2-1,-height/2};
+    pos_right_ = pos_ + Pt{width/2-1,-height/2};
+    last_pos_left_ = last_pos_ + Pt{-width/2,-height/2};
+    pos_left_ = pos_ + Pt{-width/2,-height/2};
+
+    for (auto hb : hard_blocks) {
+        if (hb->has_crossed_block_downwards(last_pos_, pos_)) {
+            set_grounded(true);
+            set_y(hb->top()-1);
+        }
+        else if (hb->has_crossed_block_upwards(last_pos_top_, pos_top_)) {
+            set_y(hb->bottom() + height);
+        }
+        if (hb->has_crossed_block_right(last_pos_left_, pos_left_)) {
+            set_x(hb->right() + width/2+1);
+        }
+        else if (hb->has_crossed_block_left(last_pos_right_, pos_right_)) {
+            set_x(hb->left() - width/2);
         }
     }
 }

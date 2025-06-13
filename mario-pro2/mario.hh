@@ -5,6 +5,7 @@
 #include <vector>
 #include <set>
 #include "platform.hh"
+#include "hardBlock.hh"
 #include "window.hh"
 
 class Mario {
@@ -13,7 +14,8 @@ class Mario {
     const int width = 12;
     const int height = 16;
 
-    pro2::Pt pos_, last_pos_; //control point located at the bottom-centre of character
+    pro2::Pt pos_, last_pos_, pos_top_, last_pos_top_,
+             pos_left_, last_pos_left_, pos_right_, last_pos_right_; //control point located at the bottom-centre of character
     pro2::Pt speed_ = {0, 0};
     pro2::Pt accel_ = {0, 0};
     int      accel_time_ = 0;
@@ -77,7 +79,8 @@ class Mario {
 
     void jump();
 
-    void update(pro2::Window& window, const std::set<const Platform*>& platforms);
+    void update(pro2::Window& window, const std::set<const Platform*>& platforms,
+                    const std::set<const HardBlock*>& hard_blocks);
 
     void update_score();
 
