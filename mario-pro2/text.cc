@@ -24,15 +24,15 @@ string Text::stoi(int n) {
 void Text::paint_char(pro2::Window& window, int x, int y, char c, Color col) const {
     if (c >= '0' and c <= '9') {
         int idx = c - '0';
-        paint_sprite(window, {x,y}, numbers[idx]);
+        paint_sprite(window, {x,y}, numbers_[idx]);
     }
     else if (c >= 'a' and c <= 'z') {
         int idx = c - 'a';
-        paint_sprite(window, {x,y}, alphabet[idx]);
+        paint_sprite(window, {x,y}, alphabet_[idx]);
     }
     else if (c >= 'A' and c <= 'Z')  {
         int idx = c - 'A';
-        paint_sprite(window, {x,y}, alphabet[idx]);
+        paint_sprite(window, {x,y}, alphabet_[idx]);
     }
     else std::cout << "Error: unknown character to draw";
 }
@@ -40,7 +40,7 @@ void Text::paint_char(pro2::Window& window, int x, int y, char c, Color col) con
 void Text::paint_phrase(pro2::Window& window, int x, int y, string phrase, Color col) const {
     int n = phrase.size();
     for (int i = 0; i < n; ++i) {
-        paint_char(window, x + i*width, y, phrase[i], col);
+        paint_char(window, x + i*char_width_, y, phrase[i], col);
     }
 }
 
@@ -53,7 +53,7 @@ void Text::paint_number(pro2::Window& window, int x, int y, int n, Color col) co
 const int _ = -1;
 const int o = -2; // 
 
-const vector<Sprite> Text::alphabet = {
+const vector<Sprite> Text::alphabet_ = {
     // A (0)
     {
         {_, _, o, o, o, _, _, _},
@@ -342,7 +342,7 @@ const vector<Sprite> Text::alphabet = {
     }
 };
 
-const vector<Sprite> Text::numbers = {
+const vector<Sprite> Text::numbers_ = {
     // 0 (26)
     {
         {_, _, o, o, o, _, _, _},

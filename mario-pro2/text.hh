@@ -4,16 +4,15 @@
 #include <vector>
 #include <string>
 #include "window.hh"
-
-typedef std::vector<std::vector<int>> Sprite;
+#include "globals.hh"
 
 class Text {
     private:
 
-    static const int width = 8;
+    static const int char_width_ = 8;
 
-    static const std::vector<Sprite> alphabet;
-    static const std::vector<Sprite> numbers;
+    static const std::vector<Sprite> alphabet_;
+    static const std::vector<Sprite> numbers_;
 
     static std::string stoi(int n);
     public:
@@ -24,7 +23,7 @@ class Text {
         void paint_number(pro2::Window& window, int x, int y, int n, pro2::Color col = pro2::black) const;
         
         int get_width() {
-            return width;
+            return char_width_;
         }
 };
 

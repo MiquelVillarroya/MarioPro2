@@ -8,6 +8,7 @@
 #include "window.hh"
 #include "finder.hh"
 #include "text.hh"
+#include "timer.hh"
 
 class Game {
  private:
@@ -26,7 +27,9 @@ class Game {
     void update_objects(pro2::Window& window);
     void update_camera(pro2::Window& window);
 
-    Text text_;
+    Text* text_;
+
+    Timer timer_;
 
  public:
     Game(int width, int height);
