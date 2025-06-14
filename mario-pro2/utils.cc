@@ -1,4 +1,5 @@
 #include "utils.hh"
+#include <iostream>
 using namespace std;
 
 namespace pro2 {
@@ -35,10 +36,16 @@ void paint_sprite(pro2::Window&              window,
             }
             else if (line[_j] == -2) {
                 window.set_pixel({orig.x + j, orig.y + i}, col);
-
             }
         }
     }
+}
+
+void paint_sprite(pro2::Window&              window,
+                  pro2::Pt                   orig,
+                  const vector<vector<int>>& sprite,
+                  pro2::Color                col    ) {
+    paint_sprite(window, orig, sprite, false, col);          
 }
 
 }  // namespace pro2

@@ -1,5 +1,7 @@
 #include "mario.hh"
 #include "utils.hh"
+#include "terrain.hh"
+
 using namespace std;
 using namespace pro2;
 
@@ -33,8 +35,9 @@ const vector<vector<int>> Mario::mario_sprite_normal_ = {
 };
 // clang-format on
 Mario::Mario(pro2::Pt pos, char left_key, char right_key, char jump_key)
-    : pos_(pos), last_pos_(pos),
-    left_key_(left_key), right_key_(right_key), jump_key_(jump_key) {}
+    : pos_(pos), last_pos_(pos), init_pos_(pos),
+    left_key_(left_key), right_key_(right_key), jump_key_(jump_key),
+    lives_(3), score_(0) {}
 
 void Mario::paint(pro2::Window& window) const {
     const Pt top_left = {pos_.x - 6, pos_.y - 15};
@@ -70,8 +73,8 @@ void Mario::jump() {
     }
 }
 
-void Mario::update(pro2::Window& window, const set<const Platform*>& platforms,
-    const set<const HardBlock*>& hard_blocks) {
+void Mario::update(pro2::Window& window, const set<Platform*>& platforms,
+    const set<HardBlock*>& hard_blocks, const set<Terrain*>& terrain) {
     last_pos_ = pos_;
 
     if (window.is_key_down(jump_key_)) {
@@ -95,13 +98,6 @@ void Mario::update(pro2::Window& window, const set<const Platform*>& platforms,
     // Check position
     set_grounded(false);
 
-    for (auto platform : platforms) {
-        if (platform->has_crossed_floor_downwards(last_pos_, pos_)) {
-            set_grounded(true);
-            set_y(platform->top());
-        }
-    }
-
     last_pos_top_ = last_pos_ + Pt{0, -height+1};
     pos_top_ = pos_ + Pt{0, -height+1};
     last_pos_right_ = last_pos_ + Pt{width/2-1,-height/2};
@@ -109,13 +105,35 @@ void Mario::update(pro2::Window& window, const set<const Platform*>& platforms,
     last_pos_left_ = last_pos_ + Pt{-width/2,-height/2};
     pos_left_ = pos_ + Pt{-width/2,-height/2};
 
+    for (auto platform : platforms) {
+        if (platform->has_crossed_floor_downwards(last_pos_, pos_)) {
+            set_grounded(true);
+            set_y(platform->top());
+        }
+    }
+
+    for(auto t : terrain) {
+        if (t->has_crossed_floor_downwards(last_pos_, pos_)) {
+            set_grounded(true);
+            set_y(t->top());
+        }
+        if (t->has_crossed_block_right(last_pos_left_, pos_left_)) {
+            set_x(t->right() + width/2+1);
+        }
+        else if (t->has_crossed_block_left(last_pos_right_, pos_right_)) {
+            set_x(t->left() - width/2);
+        }
+    }
+
     for (auto hb : hard_blocks) {
         if (hb->has_crossed_block_downwards(last_pos_, pos_)) {
             set_grounded(true);
-            set_y(hb->top()-1);
+            set_y(hb->top());
         }
         else if (hb->has_crossed_block_upwards(last_pos_top_, pos_top_)) {
             set_y(hb->bottom() + height);
+            speed_.y = 0;
+            accel_.y = 0;
         }
         if (hb->has_crossed_block_right(last_pos_left_, pos_left_)) {
             set_x(hb->right() + width/2+1);
@@ -123,6 +141,12 @@ void Mario::update(pro2::Window& window, const set<const Platform*>& platforms,
         else if (hb->has_crossed_block_left(last_pos_right_, pos_right_)) {
             set_x(hb->left() - width/2);
         }
+    }
+
+    if (pos_.y > 1500) {
+        --lives_;
+        set_pos(init_pos_);
+        window.set_camera_topleft({0,0});
     }
 }
 

@@ -22,10 +22,10 @@ class Finder {
     //make sure that SIZE and CELL_SIZE are always perfectly divisible
     static const int CELL_NUM = SIZE/CELL_SIZE;
 
-    typedef std::vector<std::unordered_set<const T*>> Row;
+    typedef std::vector<std::unordered_set<T*>> Row;
     std::vector<Row> grid; //Pointers are not required to be ordered, so an unordered_set is used for efficiency.
 
-    std::unordered_map<const T*, pro2::Rect> idRect; //Map pointers-rectangles (doesn't require order)
+    std::unordered_map<T*, pro2::Rect> idRect; //Map pointers-rectangles (doesn't require order)
 
     /**
     * @brief Normalizes a rectangle according to `CELL_SIZE`, giving the index cell of it's position. 
@@ -47,18 +47,18 @@ class Finder {
 
  public:
     Finder() : grid(CELL_NUM, Row(CELL_NUM)) {}
-    Finder(const std::list<T>& v) : grid(CELL_NUM, Row(CELL_NUM)) {
-        for (const auto& obj: v) {
+    Finder(std::list<T>& v) : grid(CELL_NUM, Row(CELL_NUM)) {
+        for (auto& obj: v) {
             add(&obj);
         }
     }
-    Finder(const std::list<T*>& v) : grid(CELL_NUM, Row(CELL_NUM)) {
-        for (const auto& obj: v) {
+    Finder(std::list<T*>& v) : grid(CELL_NUM, Row(CELL_NUM)) {
+        for (auto& obj: v) {
             add(obj);
         }
     }
 
-    void add(const T *t) {
+    void add(T *t) {
         idRect[t] = t->get_rect();
         pro2::Rect r = normalize(t->get_rect());
 
@@ -73,12 +73,12 @@ class Finder {
         else if (r.top != r.bottom) grid[r.bottom][r.left].insert(t);
     }
     
-    void update(const T *t) {
+    void update(T *t) {
         remove(t);
         add(t);
     }
 
-    void remove(const T *t) {
+    void remove(T *t) {
         auto it = idRect.find(t);
         if (it == idRect.end()) return; //Check that element exists
         pro2::Rect r = normalize(it->second);
@@ -94,26 +94,26 @@ class Finder {
         idRect.erase(it);
     }
 
-    std::set<const T*> query(pro2::Rect qrect) const {
+    std::set<T*> query(pro2::Rect qrect) const {
         pro2::Rect r = normalize(qrect);
-        std::set<const T*> s;
+        std::set<T*> s;
 
         //Horizontal borders check (including corners)
         for (int x = r.left; x <= r.right; ++x) {
-            for (const T* obj : grid[r.top][x]) {
+            for (T* obj : grid[r.top][x]) {
                 if (checkCollision(obj->get_rect(), qrect)) s.insert(obj);
             }
-            for (const T* obj : grid[r.bottom][x]) {
+            for (T* obj : grid[r.bottom][x]) {
                 if (checkCollision(obj->get_rect(), qrect)) s.insert(obj);
             }
         }
 
         //Vertical borders check (no corners)
         for (int y = r.top + 1; y < r.bottom; ++y) {
-            for (const T* obj : grid[y][r.left]) {
+            for (T* obj : grid[y][r.left]) {
                 if (checkCollision(obj->get_rect(), qrect)) s.insert(obj);
             }
-            for (const T* obj : grid[y][r.right]) {
+            for (T* obj : grid[y][r.right]) {
                 if (checkCollision(obj->get_rect(), qrect)) s.insert(obj);
             }
         }

@@ -6,9 +6,14 @@
 using namespace pro2;
 
 void HardBlock::paint(pro2::Window& window) const {
-    paint_sprite(window, {left_, top_}, block_texture_);
+    const int xsz = block_texture_.size();
+    const int ysz = block_texture_[0].size();
+    for (int i = top_+1; i <= bottom_; i++) {
+        for (int j = left_; j <= right_; j++) {
+            window.set_pixel({j, i}, block_texture_[(i - top_-1) % xsz][(j - left_) % ysz]);
+        }
+    }
 }
-
 bool HardBlock::has_crossed_block_downwards(pro2::Pt plast, pro2::Pt pcurr) const {
     return (left_ <= plast.x && plast.x <= right_) && (left_ <= pcurr.x && pcurr.x <= right_) &&
            (plast.y <= top_ && pcurr.y >= top_);

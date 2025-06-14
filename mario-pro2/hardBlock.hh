@@ -10,16 +10,10 @@ class HardBlock {
     private:
     int left_, right_, top_, bottom_;
 
-    static const int block_width_ = 16;
-    static const int block_height_ = 16;
-
     static const Sprite block_texture_;
     
     public:
         HardBlock() :  left_(0), right_(0), top_(0), bottom_(0) {}
-        
-        HardBlock(pro2::Pt pos) : left_(pos.x), right_(pos.x+block_width_-1),
-        top_(pos.y), bottom_(pos.y+block_height_-1){}
 
         HardBlock(int left, int right, int top, int bottom)
             : left_(left), right_(right), top_(top), bottom_(bottom) {}

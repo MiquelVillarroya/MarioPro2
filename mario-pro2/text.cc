@@ -24,15 +24,15 @@ string Text::stoi(int n) {
 void Text::paint_char(pro2::Window& window, Pt pos, char c, Color col) const {
     if (c >= '0' and c <= '9') {
         int idx = c - '0';
-        paint_sprite(window, pos, numbers_[idx]);
+        paint_sprite(window, pos, numbers_[idx], col);
     }
     else if (c >= 'a' and c <= 'z') {
         int idx = c - 'a';
-        paint_sprite(window, pos, alphabet_[idx]);
+        paint_sprite(window, pos, alphabet_[idx], col);
     }
     else if (c >= 'A' and c <= 'Z')  {
         int idx = c - 'A';
-        paint_sprite(window, pos, alphabet_[idx]);
+        paint_sprite(window, pos, alphabet_[idx], col);
     }
     else std::cout << "Error: unknown character to draw";
 }

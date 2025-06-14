@@ -10,6 +10,8 @@
 #include "text.hh"
 #include "timer.hh"
 #include "hardBlock.hh"
+#include "boo.hh"
+#include "terrain.hh"
 
 class Game {
  private:
@@ -19,10 +21,16 @@ class Game {
     Finder<Platform> plat_finder_;
 
     std::list<HardBlock> hard_blocks_;
-    Finder<HardBlock> hard_block_finder;
+    Finder<HardBlock> hard_block_finder_;
+
+    std::list<Terrain> terrain_;
+    Finder<Terrain> terrain_finder_;
     
     std::list<Coin*> coins_;
     Finder<Coin> coin_finder_;
+
+    std::list<Boo> boos_;
+    Finder<Boo> boo_finder_;
 
     bool finished_;
     bool paused_;
@@ -50,7 +58,8 @@ class Game {
 
  private:
     static constexpr int sky_blue = 0x5c94fc;
-    static const std::vector<std::vector<int>> mini_coin_texture_;
+    static const Sprite mini_coin_texture_;
+    static const Sprite lives_texture_;
 
 };
 

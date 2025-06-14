@@ -44,7 +44,8 @@ void paint_rect(pro2::Window& window, Rect rect, pro2::Color color);
  * @param window Finestra a la que pintar
  * @param orig   Origen (cantonada de dalt a l'esquerra) del rectangle que forma el _sprite_
  * @param sprite Matriu de colors que representa la imatge (_sprite_).
- * @param mirror Si cal pintar girar la textura horitzontalment
+ * @param mirror Si cal pintar girar la textura horitzontalment.
+ * @param col    Color a pintar sprites monocromàtics com text, negre per defecteñ
  */
 void paint_sprite(pro2::Window&                        window,
                   pro2::Pt                             orig,
@@ -52,6 +53,11 @@ void paint_sprite(pro2::Window&                        window,
                   bool                                 mirror = false,
                   pro2::Color                          col = black);
 
-}  // namespace pro2
+void paint_sprite(pro2::Window&                        window,
+                  pro2::Pt                             orig,
+                  const std::vector<std::vector<int>>& sprite,
+                  pro2::Color                          col);
+
+}   // namespace pro2
 
 #endif

@@ -7,6 +7,7 @@
 #include "platform.hh"
 #include "hardBlock.hh"
 #include "window.hh"
+#include "terrain.hh"
 
 class Mario {
  private:
@@ -14,6 +15,7 @@ class Mario {
     const int width = 12;
     const int height = 16;
 
+    pro2::Pt init_pos_;
     pro2::Pt pos_, last_pos_, pos_top_, last_pos_top_,
              pos_left_, last_pos_left_, pos_right_, last_pos_right_; //control point located at the bottom-centre of character
     pro2::Pt speed_ = {0, 0};
@@ -26,6 +28,7 @@ class Mario {
 	void apply_physics_();
 
     //Gameplay
+    int lives_ = 3;
     int score_ = 0;
 
     //Control keys
@@ -79,10 +82,27 @@ class Mario {
 
     void jump();
 
-    void update(pro2::Window& window, const std::set<const Platform*>& platforms,
-                    const std::set<const HardBlock*>& hard_blocks);
+    void update(pro2::Window& window, const std::set<Platform*>& platforms,
+                const std::set<HardBlock*>& hard_blocks, const std::set<Terrain*>& terrain);
 
     void update_score();
+
+    int get_lives() {
+        return lives_;
+    }
+    void set_lives(int l) {
+        lives_ = l;
+    }
+    bool is_alive() {
+        return lives_ >= 0;
+    }
+
+    bool is_looking_left() {
+        return looking_left_;
+    }
+    bool is_looking_right() {
+        return !looking_left_;
+    }
 
  private:
     static const std::vector<std::vector<int>> mario_sprite_normal_;

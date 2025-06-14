@@ -3,12 +3,13 @@
 
 #include <vector>
 #include "window.hh"
+#include "globals.hh"
 
 class Platform {
  private:
     int left_, right_, top_, bottom_;
 
-	static const std::vector<std::vector<int>> platform_texture_;
+	static const Sprite platform_texture_;
 
  public:
     Platform() : left_(0), right_(0), top_(0), bottom_(0) {}
