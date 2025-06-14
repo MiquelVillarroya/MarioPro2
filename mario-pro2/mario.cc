@@ -148,6 +148,14 @@ void Mario::update(pro2::Window& window, const set<Platform*>& platforms,
         set_pos(init_pos_);
         window.set_camera_topleft({0,0});
     }
+
+    if (invincible) {
+        invTimer--;
+        if (invTimer <= 0) {
+            setInvincible(false);
+            invTimer = 60;
+        }
+    }
 }
 
 void Mario::update_score() {

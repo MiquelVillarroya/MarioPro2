@@ -31,6 +31,9 @@ class Mario {
     int lives_ = 3;
     int score_ = 0;
 
+    bool invincible = false;
+    int invTimer = 80;
+
     //Control keys
     char left_key_, right_key_, jump_key_;
 
@@ -65,6 +68,11 @@ class Mario {
         pos_.y = pos.y;
     }
 
+    void set_pos_init() {
+        pos_.x = init_pos_.x;
+        pos_.y = init_pos_.y;
+    }
+
     bool is_grounded() const {
         return grounded_;
     }
@@ -93,8 +101,19 @@ class Mario {
     void set_lives(int l) {
         lives_ = l;
     }
+    void get_hurt_() {
+        setInvincible(true);
+        --lives_;
+    }
     bool is_alive() {
         return lives_ >= 0;
+    }
+
+    void setInvincible(bool inv) {
+        invincible = inv;
+    }
+    bool isInvincible() {
+        return invincible;
     }
 
     bool is_looking_left() {

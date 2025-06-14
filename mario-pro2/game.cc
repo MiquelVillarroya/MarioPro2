@@ -52,6 +52,9 @@ void Game::process_keys(pro2::Window& window) {
         window.set_camera_topleft({0,0});
         mario_.set_lives(3);
     }
+    else if (window.was_key_pressed(Keys::Backspace)) {
+        intro = false;
+    }
 }
 
 void Game::update_objects(pro2::Window& window) {    //While the platform-player logic is managed inside player, other logic will be managed here
@@ -91,6 +94,11 @@ void Game::update_objects(pro2::Window& window) {    //While the platform-player
         or mario_.is_looking_right() and mario_pos.x > b->pos().x) {
             b->update(mario_pos);
         }
+        if (!mario_.isInvincible() and checkCollision(mario_rect, b->get_rect())) {
+            mario_.get_hurt_();
+            mario_.set_pos_init();
+            window.set_camera_topleft({0,0});
+        }
     }
 }
 
@@ -120,7 +128,7 @@ void Game::update_camera(pro2::Window& window) {
 
 void Game::update(pro2::Window& window) {
     process_keys(window);
-    if(!is_paused() and mario_.is_alive()) {
+    if (!intro and !is_paused() and mario_.is_alive()) {
         update_objects(window);
         update_camera(window);
         timer_.update();
@@ -128,7 +136,11 @@ void Game::update(pro2::Window& window) {
 }
 
 void Game::paint(pro2::Window& window) {
-    if (mario_.is_alive()) {
+    if (intro) {
+        window.clear(black);
+        text_->paint_phrase(window, {0,0}, "hola", white);
+    }
+    else if (mario_.is_alive()) {
         window.clear(sky_blue);
 
         auto nearby_plat = plat_finder_.query(window.camera_rect());

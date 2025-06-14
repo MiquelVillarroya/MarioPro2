@@ -43,6 +43,8 @@ class Game {
 
     Timer timer_;
 
+    bool intro = true;
+
  public:
     Game(int width, int height);
 
