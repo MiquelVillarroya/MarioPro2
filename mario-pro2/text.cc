@@ -1,10 +1,11 @@
+#include <algorithm>
+#include <iostream>
 #include "text.hh"
 #include "utils.hh"
-#include <iostream>
-#include <algorithm>
+#include "globals.hh"
+
 using namespace std;
 using namespace pro2;
-
     
 string Text::stoi(int n) {
         if (n != 0) {
@@ -21,7 +22,7 @@ string Text::stoi(int n) {
         return "0";
     }
 
-void Text::paint_char(pro2::Window& window, Pt pos, char c, Color col) const {
+void Text::paint_char(pro2::Window& window, Pt pos, const char c, Color col) const {
     if (c >= '0' and c <= '9') {
         int idx = c - '0';
         paint_sprite(window, pos, numbers_[idx], col);
@@ -37,15 +38,18 @@ void Text::paint_char(pro2::Window& window, Pt pos, char c, Color col) const {
     else std::cout << "Error: unknown character to draw";
 }
 
-void Text::paint_phrase(pro2::Window& window, Pt pos, string phrase, Color col) const {
-    int n = phrase.size();
+void Text::paint_phrase(pro2::Window& window, Pt pos, const string word, Color col) const {
+    int n = word.size();
     for (int i = 0; i < n; ++i) {
-        paint_char(window, pos, phrase[i], col);
-        pos.x += char_width_;
+        if (word[i] != ' ') {
+            paint_char(window, pos, word[i], col);
+        }
+        pos.x += FONT_SIZE;
     }
 }
 
-void Text::paint_number(pro2::Window& window, Pt pos, int n, Color col) const {
+
+void Text::paint_number(pro2::Window& window, Pt pos, const int n, Color col) const {
     paint_phrase(window, pos, stoi(n), col);
 }
 

@@ -1,5 +1,5 @@
 #include "utils.hh"
-#include <iostream>
+#include "globals.hh"
 using namespace std;
 
 namespace pro2 {
@@ -47,5 +47,12 @@ void paint_sprite(pro2::Window&              window,
                   pro2::Color                col    ) {
     paint_sprite(window, orig, sprite, false, col);          
 }
+
+int get_phrase_displacement(std::string phrase) {
+    float n = phrase.size()/2;
+    if (phrase.size() % 2 != 0) n += 0.5;
+    return int(n*FONT_SIZE);
+}
+
 
 }  // namespace pro2

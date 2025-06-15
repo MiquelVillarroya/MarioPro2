@@ -439,6 +439,16 @@ class Window {
         return {left, top, right, bottom};
     }
 
+    Rect camera_rect_extra(int extra) const {
+        const int width = fenster_.width / zoom_;
+        const int height = fenster_.height / zoom_;
+        const int left = topleft_.x - extra;
+        const int top = topleft_.y - extra;
+        const int right = topleft_.x + width + extra;
+        const int bottom = topleft_.y + height + extra;
+        return {left, top, right, bottom};
+    }
+
     /**
      * @brief Establece la posición de la esquina superior izquierda de la cámara.
      *
@@ -459,6 +469,17 @@ class Window {
     Pt topleft() const {
         return topleft_;
     }
+
+    /**
+     * @brief Retorna la posició del centre superior de la càmera
+     *
+     * @returns Un `Pt` con las coordenadas del centre superior de la càmera
+     */
+    Pt top_centre() const {
+        const int width = fenster_.width / zoom_;
+        return topleft_ + pro2::Pt{width/2, 0};
+    }
+
 };
 
 }  // namespace pro2

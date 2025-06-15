@@ -16,6 +16,20 @@ inline Pt operator -(const Pt& a, const Pt&b) {
     return {a.x - b.x, a.y - b.y};
 }
 
+inline Pt& operator +=(Pt& a, const Pt& b) {
+    a.x += b.x;
+    a.y += b.y;
+    return a;
+}
+
+inline Pt& operator -=(Pt& a, const Pt& b) {
+    a.x -= b.x;
+    a.y -= b.y;
+    return a;
+}
+
+
+
 /**
  * @brief Compara dos punts del pla
  * 

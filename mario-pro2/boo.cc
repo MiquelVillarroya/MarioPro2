@@ -43,19 +43,24 @@ void Boo::update(Pt mario_centre_) {
     pos_centre_.y += speed_.y;
 
     looking_left_ = dx > 0;
+
+    set_being_looked(false);
 }
 
 void Boo::paint(pro2::Window& window) const {
     Pt pos_top_left = pos_centre_ + pro2::Pt{-width_/2,-height_/2};
-    paint_sprite(window, pos_top_left, boo_texture_, looking_left_);
+    if (!being_looked_) paint_sprite(window, pos_top_left, boo_texture_1_, looking_left_);
+    else paint_sprite(window, pos_top_left, boo_texture_2_, looking_left_);
 }
 
 const int _ = -1;
 const int b = black;
 const int w = white;
 const int r = red;
+const int p = 0x00ee7cca;
+const int f = 0x00ea40b5;
 
-const Sprite Boo::boo_texture_ = {
+const Sprite Boo::boo_texture_1_ = {
     {_,_,_,_,_,b,b,b,b,b,_,_,_,_,_,_},
     {_,_,_,b,b,w,w,w,w,w,b,b,_,_,_,_},
     {_,_,b,w,w,w,w,w,w,w,w,w,b,_,_,_},
@@ -72,4 +77,23 @@ const Sprite Boo::boo_texture_ = {
     {_,_,_,b,b,b,w,w,w,w,b,b,_,_,_,_},
     {_,_,_,_,_,_,b,b,b,b,_,_,_,_,_,_}
 
+};
+
+const Sprite Boo::boo_texture_2_ = {
+    {_,_,_,_,_,b,b,b,b,b,_,_,_,_,_,_},
+    {_,_,_,b,b,w,w,w,w,w,b,b,_,_,_,_},
+    {_,_,b,w,w,w,w,w,w,w,w,w,b,_,_,_},
+    {_,b,w,w,w,w,w,w,w,w,w,w,w,b,_,_},
+    {_,b,w,w,w,w,w,w,w,b,b,b,w,w,b,_},
+    {b,w,b,b,w,w,w,b,b,w,w,w,w,w,w,b},
+    {b,w,w,w,b,p,b,w,w,w,w,w,w,w,w,b},
+    {b,w,w,w,b,p,b,w,w,w,w,w,w,w,b,_},
+    {b,b,b,b,b,p,b,b,b,b,b,b,w,w,w,b},
+    {b,f,p,p,p,p,p,p,p,p,p,f,w,w,w,b},
+    {b,w,w,w,w,w,w,w,w,w,w,w,w,w,w,b},
+    {_,b,w,w,w,w,w,w,w,w,w,w,w,w,w,b},
+    {_,b,w,w,w,b,b,w,w,w,w,w,w,w,b,_},
+    {_,_,b,w,w,w,w,w,w,w,w,w,w,b,_,_},
+    {_,_,_,b,b,w,w,w,w,w,w,b,b,_,_,_},
+    {_,_,_,_,_,b,b,b,b,b,b,_,_,_,_,_}
 };

@@ -4,19 +4,22 @@
 #include <vector>
 #include "geometry.hh"
 #include "window.hh"
+#include "globals.hh"
 
-enum class movType {
-   NONE, LINEAR, CIRCULAR
-};
+/**
+ * @brief Class of coin objects obtainable by mario, they come in 3 types:
+ * static coins, lienar movement coins, and circular movement coins.
+ * Their sprite is animated by spinning the coin.
+ */
 
 class Coin {
  private:
     //Position logic
-    static const int width = 12;
-    static const int height = 16;
     pro2::Pt centre_; //centre (bot_right)
 
     //Spin logic
+    //the spin velocity and spin_counter_ must be a multiple of 8
+    //because the coin has 8 spin states (some are reused mirrored sprites)
     static const int spin_vel_ = 8*5;
     static int spin_counter_;
 
@@ -61,7 +64,7 @@ class Coin {
 
    /**
     * @brief Paints in the screen the coin sprite.
-    * Depending on the `spin_counter` parametere a different state of the coin will be painted. 
+    * Depending on the `spin_counter` parameter a different state of the coin will be painted. 
     *
     * @param window Window where the coin is painted.
     */
@@ -76,12 +79,15 @@ class Coin {
         return {centre_.x-width/2, centre_.y-height/2, centre_.x+width/2-1, centre_.y+height/2-1};
     }
 
+    pro2::Pt get_pos() const {
+      return centre_;
+    }
+
  private:
-    static const std::vector<std::vector<int>> coin_texture_1_;
-    static const std::vector<std::vector<int>> coin_texture_2_;
-    static const std::vector<std::vector<int>> coin_texture_3_;
-    static const std::vector<std::vector<int>> coin_texture_4_;
-    static const std::vector<std::vector<int>> coin_texture_5_;
+    static const std::vector<Sprite> coin_texture_;
+
+    static const int width = 12;
+    static const int height = 16;
 };
 
 #endif

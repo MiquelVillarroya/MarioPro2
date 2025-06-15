@@ -3,6 +3,7 @@
 #include "text.hh"
 #include "boo.hh"
 #include "terrain.hh"
+#include "globals.hh"
 
 #include <vector>
 
@@ -11,7 +12,7 @@ using namespace std;
 
 Game::Game(int width, int height)
     : mario_({width / 2, 150}, Keys::Left, Keys::Right, Keys::Space),
-      finished_(false), paused_(false), 
+      finished_(false), paused_(false), part_manager_(new ParticleManager),
       text_(new Text), timer_(text_) {
     platforms_.push_back(Platform(100, 300, 200, 211));
     platforms_.push_back(Platform(0, 200, 250, 261));
@@ -52,17 +53,18 @@ void Game::process_keys(pro2::Window& window) {
         window.set_camera_topleft({0,0});
         mario_.set_lives(3);
     }
-    else if (window.was_key_pressed(Keys::Backspace)) {
-        intro = false;
+    else if (window.was_key_pressed(Keys::Space)) {
+        intro_ = false;
     }
 }
 
 void Game::update_objects(pro2::Window& window) {    //While the platform-player logic is managed inside player, other logic will be managed here
     //Update objects
+    Rect camera_rect = window.camera_rect_extra(extra_);
 
-    auto nearby_plat = plat_finder_.query(window.camera_rect());
-    auto nearby_hard_blocks = hard_block_finder_.query(window.camera_rect());
-    auto nearby_terrain = terrain_finder_.query(window.camera_rect());
+    auto nearby_plat = plat_finder_.query(camera_rect);
+    auto nearby_hard_blocks = hard_block_finder_.query(camera_rect);
+    auto nearby_terrain = terrain_finder_.query(camera_rect);
     mario_.update(window, nearby_plat, nearby_hard_blocks, nearby_terrain);
 
     //all coins are updated (not only those in the window) because if not, the coin circles will desynchronize
@@ -73,33 +75,41 @@ void Game::update_objects(pro2::Window& window) {    //While the platform-player
     Coin::update_spin();
     
 
-    //Check for collisions
+    //Check for collisions between mario and coins
     Rect mario_rect = mario_.get_rect();
-    auto nearby_coins = coin_finder_.query(window.camera_rect());
+    auto nearby_coins = coin_finder_.query(camera_rect);
     auto itc = nearby_coins.begin();
     while (itc != nearby_coins.end()) {
         if (checkCollision((*itc)->get_rect(), mario_rect)) {
+            part_manager_->enqueue((*itc)->get_pos(), PartType::COIN);
+
             coin_finder_.remove(*itc);
             coins_.remove(const_cast<Coin*>(*itc)); //Only instance of needing a non-const Finder, not worth changing for only this occasion
             delete *itc;
+
             mario_.update_score();
         }
         ++itc;
     }
 
+    //Update boos according to mario behaviour, also check for collision
     Pt mario_pos = mario_.pos() - Pt{0, 8};
-    auto nearby_boos = boo_finder_.query(window.camera_rect());
+    auto nearby_boos = boo_finder_.query(camera_rect);
     for (auto b : nearby_boos) {
         if (mario_.is_looking_left() and mario_pos.x < b->pos().x
         or mario_.is_looking_right() and mario_pos.x > b->pos().x) {
             b->update(mario_pos);
         }
+        else b->set_being_looked(true);
         if (!mario_.isInvincible() and checkCollision(mario_rect, b->get_rect())) {
             mario_.get_hurt_();
             mario_.set_pos_init();
             window.set_camera_topleft({0,0});
         }
     }
+
+    if (checkCollision(mario_rect, jutge_rect)) win_ = true;
+
 }
 
 void Game::update_camera(pro2::Window& window) {
@@ -128,42 +138,71 @@ void Game::update_camera(pro2::Window& window) {
 
 void Game::update(pro2::Window& window) {
     process_keys(window);
-    if (!intro and !is_paused() and mario_.is_alive()) {
+    if (!win_ and !intro_ and !is_paused() and mario_.is_alive()) {
         update_objects(window);
         update_camera(window);
         timer_.update();
+        part_manager_->update();
     }
 }
 
 void Game::paint(pro2::Window& window) {
-    if (intro) {
+    if (intro_) {
         window.clear(black);
-        text_->paint_phrase(window, {0,0}, "hola", white);
+        Pt camera_center = window.camera_center();
+
+        string phrase1 = "Els coordinadors de pro2 han segrestat el jutge";
+        int displ1 = get_phrase_displacement(phrase1);
+        Pt pos_1 = camera_center - Pt{0, FONT_SIZE+2};
+        pos_1 -= Pt{displ1, 0};
+        text_->paint_phrase(window, pos_1, phrase1, white);
+
+        string phrase2 = "Prem space per jugar";
+        int displ2 = get_phrase_displacement(phrase2);
+        Pt pos_2 = camera_center + Pt{0, FONT_SIZE+2};
+        pos_2 -= Pt{displ2, 0};
+        text_->paint_phrase(window, pos_2, phrase2, white);
+    }
+    else if (win_) {
+                window.clear(black);
+        Pt camera_center = window.camera_center();
+
+        string phrase1 = "Has rescatat al jutge";
+        int displ1 = get_phrase_displacement(phrase1);
+        Pt pos_1 = camera_center - Pt{0, FONT_SIZE+2};
+        pos_1 -= Pt{displ1, 0};
+        text_->paint_phrase(window, pos_1, phrase1, white);
+
+        string phrase2 = "Felicitats";
+        int displ2 = get_phrase_displacement(phrase2);
+        Pt pos_2 = camera_center + Pt{0, FONT_SIZE+2};
+        pos_2 -= Pt{displ2, 0};
+        text_->paint_phrase(window, pos_2, phrase2, white);
     }
     else if (mario_.is_alive()) {
         window.clear(sky_blue);
-
-        auto nearby_plat = plat_finder_.query(window.camera_rect());
+        Rect camera_rect = window.camera_rect_extra(extra_);
+        auto nearby_plat = plat_finder_.query(camera_rect);
         for (auto p : nearby_plat) {
             p->paint(window);
         }
 
-        auto nearby_coin = coin_finder_.query(window.camera_rect());
+        auto nearby_coin = coin_finder_.query(camera_rect);
         for (auto c : nearby_coin) {
             c->paint(window);
         }
 
-        auto nearby_hard_blocks = hard_block_finder_.query(window.camera_rect());
+        auto nearby_hard_blocks = hard_block_finder_.query(camera_rect);
         for (auto hb : nearby_hard_blocks) {
             hb->paint(window);
         }
 
-        auto nearby_boos = boo_finder_.query(window.camera_rect());
+        auto nearby_boos = boo_finder_.query(camera_rect);
         for (auto b : nearby_boos) {
             b->paint(window);
         }
 
-        auto nearby_terrain = terrain_finder_.query(window.camera_rect());
+        auto nearby_terrain = terrain_finder_.query(camera_rect);
         for (auto t : nearby_terrain) {
             t->paint(window);
         }
@@ -175,22 +214,46 @@ void Game::paint(pro2::Window& window) {
         Pt cam_topleft = window.topleft();
         int space = 5;
 
-        paint_sprite(window, cam_topleft + Pt{space, 3}, mini_coin_texture_);
-        space += 10;
-        text_->paint_char(window, cam_topleft + Pt{space, 5}, 'x');
-        space += 9;
-        text_->paint_number(window, cam_topleft + Pt{space, 5}, score);
+        paint_sprite(window, cam_topleft + Pt{space, top_margin_-2}, mini_coin_texture_);
+        space += mini_coin_texture_width_;
+        text_->paint_char(window, cam_topleft + Pt{space, top_margin_}, 'x');
+        space += FONT_SIZE+1;
+        text_->paint_number(window, cam_topleft + Pt{space, top_margin_}, score);
 
-        timer_.paint(window, cam_topleft + Pt{window.width()-40, 3});
+        space = 40;
+        timer_.paint(window, cam_topleft + Pt{window.width()-space, 3});
 
-        paint_sprite(window, cam_topleft + Pt{window.width()-81, 5}, lives_texture_);
-        text_->paint_char(window, cam_topleft + Pt{window.width()-67, 5}, 'x');
-        text_->paint_number(window, cam_topleft + Pt{window.width()-58, 5}, mario_.get_lives());    
+        space += 40;
+        paint_sprite(window, cam_topleft + Pt{window.width()-space, 5}, lives_texture_);
+        space -= lives_texture_width_;
+        text_->paint_char(window, cam_topleft + Pt{window.width()-space, 5}, 'x');
+        space -= FONT_SIZE+2;
+        text_->paint_number(window, cam_topleft + Pt{window.width()-space, 5}, mario_.get_lives()); 
+        part_manager_->paint(window);   
     }
     else {
         window.clear(black);
-        text_->paint_phrase(window, {150,150}, "gameover", white);
-        text_->paint_phrase(window, {150,200}, "pressr", white);
+
+        Pt camera_center = window.camera_center();
+
+        string phrase1 = "Game Over";
+        int displ1 = get_phrase_displacement(phrase1);
+        Pt pos_1 = camera_center - Pt{0, FONT_SIZE+2};
+        pos_1 -= Pt{displ1, 0};
+        text_->paint_phrase(window, pos_1, phrase1, white);
+
+        string phrase2 = "Press r to restart";
+        int displ2 = get_phrase_displacement(phrase2);
+        Pt pos_2 = camera_center + Pt{0, FONT_SIZE+2};
+        pos_2 -= Pt{displ2, 0};
+        text_->paint_phrase(window, pos_2, phrase2, white);
+    }
+    if (is_paused()) {
+        Pt cam_top_centre = window.top_centre() + Pt{0, top_margin_};
+        string phrase = "Game paused";
+        int displ = get_phrase_displacement(phrase);
+        cam_top_centre -= Pt{displ, 0};
+        text_->paint_phrase(window, cam_top_centre, phrase, white);
     }
 }
 

@@ -4,25 +4,25 @@
 #include "window.hh"
 #include "globals.hh"
 
+/**
+ * @brief Class of solid blocks, similar to platform but they have
+ * collision in all four sides.
+ * Size of one block sprite is 16x16, so they must be constructed in multiples of 16.
+ */
 
-
-class HardBlock {
+ class HardBlock {
     private:
     int left_, right_, top_, bottom_;
-
-    static const Sprite block_texture_;
     
     public:
-        HardBlock() :  left_(0), right_(0), top_(0), bottom_(0) {}
+        HardBlock(int left, int right, int top, int bottom);
 
-        HardBlock(int left, int right, int top, int bottom)
-            : left_(left), right_(right), top_(top), bottom_(bottom) {}
+        bool has_crossed_block_downwards(pro2::Pt plast, pro2::Pt pcurr) const;
+        bool has_crossed_block_upwards(pro2::Pt plast, pro2::Pt pcurr) const;
+        bool has_crossed_block_right(pro2::Pt plast, pro2::Pt pcurr) const;
+        bool has_crossed_block_left(pro2::Pt plast, pro2::Pt pcurr) const;
 
         void paint(pro2::Window& window) const;
-
-        pro2::Rect get_rect() const {
-            return {left_, top_, right_, bottom_};
-        }
 
         int top() const {
             return top_;
@@ -37,10 +37,15 @@ class HardBlock {
             return right_;
         }
 
-        bool has_crossed_block_downwards(pro2::Pt plast, pro2::Pt pcurr) const;
-        bool has_crossed_block_upwards(pro2::Pt plast, pro2::Pt pcurr) const;
-        bool has_crossed_block_right(pro2::Pt plast, pro2::Pt pcurr) const;
-        bool has_crossed_block_left(pro2::Pt plast, pro2::Pt pcurr) const;
+        pro2::Rect get_rect() const {
+            return {left_, top_, right_, bottom_};
+        }
+
+    private:
+        static const Sprite block_texture_;
+
+        static const int width_ = 16;
+        static const int height_ = 16;
 };
 
 #endif

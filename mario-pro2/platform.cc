@@ -1,23 +1,7 @@
 #include "platform.hh"
+
 using namespace std;
-
 using pro2::Color;
-
-const int b = 0xc84d0b;
-const int _ = 0;
-
-// clang-format off
-const vector<vector<int>> Platform::platform_texture_ = {
-    {b, b, b, b, b, b, _}, 
-	{b, b, b, b, b, b, _}, 
-	{b, b, b, b, b, b, _}, 
-	{_, _, _, _, _, _, _},
-    {b, b, b, _, b, b, b}, 
-	{b, b, b, _, b, b, b}, 
-	{b, b, b, _, b, b, b}, 
-	{_, _, _, _, _, _, _},
-};
-// clang-format on
 
 void Platform::paint(pro2::Window& window) const {
     const int xsz = platform_texture_.size();
@@ -37,3 +21,20 @@ bool Platform::has_crossed_floor_downwards(pro2::Pt plast, pro2::Pt pcurr) const
 bool Platform::is_pt_inside(pro2::Pt pt) const {
 	return left_ <= pt.x && pt.x <= right_ && top_ <= pt.y && pt.y <= bottom_;
 }
+
+// clang-format on
+
+const int b = 0xc84d0b;
+const int _ = 0;
+
+// clang-format off
+const vector<vector<int>> Platform::platform_texture_ = {
+    {b, b, b, b, b, b, _}, 
+	{b, b, b, b, b, b, _}, 
+	{b, b, b, b, b, b, _}, 
+	{_, _, _, _, _, _, _},
+    {b, b, b, _, b, b, b}, 
+	{b, b, b, _, b, b, b}, 
+	{b, b, b, _, b, b, b}, 
+	{_, _, _, _, _, _, _},
+};
