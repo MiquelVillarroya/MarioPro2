@@ -42,6 +42,17 @@ class Game {
     void update_objects(pro2::Window& window);
     void update_camera(pro2::Window& window);
 
+    /**
+     * @brief Calls clear_level() to clear the level and initiates all the objects in their
+     * lists and finder so another level is prepared.
+     */
+    void level_initiation();
+
+    /**
+     * @brief Clears the level and the object list so we can load another level
+     */
+    void clear_level();
+
     //text, timer and particle
     Text* text_;
     Timer timer_;
@@ -50,7 +61,7 @@ class Game {
     
     //level control
     bool finished_;
-    bool paused_;
+    bool paused_ = false;
     bool intro_ = true;
     bool win_ = false;
 
@@ -68,11 +79,12 @@ class Game {
     }
 
  private:
+    //Drawing parameteres
     static constexpr int sky_blue = 0x5c94fc;
     static const Sprite mini_coin_texture_;
     static const Sprite lives_texture_;
 
-    static const int extra_ = 60;
+    static const int extra_ = 100;
     static const int top_margin_ = 5;
 
     static const int mini_coin_texture_width_ = 10;

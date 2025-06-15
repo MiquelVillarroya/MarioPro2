@@ -31,6 +31,7 @@ class Mario {
     int lives_ = 3;
     int score_ = 0;
 
+    //Respawn invincibility
     bool invincible = false;
     int invTimer = 80;
 
@@ -94,6 +95,9 @@ class Mario {
                 const std::set<HardBlock*>& hard_blocks, const std::set<Terrain*>& terrain);
 
     void update_score();
+    void set_score(int n) {
+        score_ = n;
+    }
 
     int get_lives() {
         return lives_;

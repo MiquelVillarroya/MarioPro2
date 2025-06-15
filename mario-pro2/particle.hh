@@ -4,6 +4,9 @@
 #include "window.hh"
 #include "globals.hh"
 
+/**
+ * @brief 
+ */
 class Particle {
     private:
         pro2::Pt pos_ = {0,0};

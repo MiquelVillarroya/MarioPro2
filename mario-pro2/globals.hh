@@ -12,7 +12,7 @@ enum class movType {
 };
 
 enum class PartType {
-    COIN, JUMP, LAND, DEATH, WIN
+    COIN, JUMP
 };
 
 #endif

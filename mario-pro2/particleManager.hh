@@ -6,6 +6,12 @@
 #include "window.hh"
 #include "globals.hh"
 
+/**
+ * @brief Class that manages creation, destruction, update and paint of particles.
+ * Although only one type of particle is implemented, is designed to handle different types
+ * of particles in the same object.
+ */
+
 class ParticleManager {
     private:
         Queue<Particle> particles_;

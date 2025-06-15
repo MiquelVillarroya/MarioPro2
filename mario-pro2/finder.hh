@@ -58,6 +58,18 @@ class Finder {
         }
     }
 
+    void clear(std::list<T>& v) {
+        for (auto& obj: v) {
+            remove(&obj);
+        }
+    }
+
+    void clear(std::list<T*>& v) {
+        for (auto& obj: v) {
+            remove(obj);
+        }
+    }
+
     void add(T *t) {
         idRect[t] = t->get_rect();
         pro2::Rect r = normalize(t->get_rect());

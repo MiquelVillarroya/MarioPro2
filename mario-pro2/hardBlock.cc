@@ -8,8 +8,8 @@ using namespace std;
 
 HardBlock::HardBlock(int left, int right, int top, int bottom)
     : left_(left), right_(right), top_(top), bottom_(bottom) {
-        if (right_-left_ % 16 != 0) cout << "Error in hardblocks dimension, width not divisible by 16!";
-        else if (bottom_ - top_ % 16 != 0) cout << "Error in hardblocks dimension, height not divisible by 16!";
+        //if (right_-left_ % 16 != 0) cout << "Error in hardblocks dimension, width not divisible by 16!";
+        //else if (bottom_ - top_ % 16 != 0) cout << "Error in hardblocks dimension, height not divisible by 16!";
 }
 
 

@@ -12,33 +12,11 @@ using namespace pro2;
 using namespace std;
 
 Game::Game(int width, int height)
-    : mario_({width / 2, 150}, Keys::Left, Keys::Right, Keys::Space),
+    : mario_({width / 2, 160}, Keys::Left, Keys::Right, Keys::Space),
       finished_(false), paused_(false), part_manager_(new ParticleManager),
-      text_(new Text), timer_(text_), jutge_(100,116,184,200) {
-    platforms_.push_back(Platform(100, 300, 200, 211));
-    platforms_.push_back(Platform(0, 200, 250, 261));
-    //test
-    hard_blocks_.push_back(HardBlock(300, 400, 200, 211));
-    hard_blocks_.push_back(HardBlock(100, 200, 148, 164));
-    terrain_.push_back(Terrain(0,700,300,400));
-    boos_.push_back(Boo({300, 50}));
-
-    for (int i = 0; i < 100; i++) {
-        platforms_.push_back(Platform(250 + i * 200, 400 + i * 200, 150, 161));
-        coins_.push_back(new Coin({300-1 + i*200, 70}, movType::CIRCULAR, {325 + i*200, 70}));
-        coins_.push_back(new Coin({350 + i*200, 70}, movType::CIRCULAR, {325 + i*200, 70}));
-        coins_.push_back(new Coin({325 + i*200, 45-1}, movType::CIRCULAR, {325 + i*200, 70}));
-        coins_.push_back(new Coin({325 + i*200, 95}, movType::CIRCULAR, {325 + i*200, 70}));
-        if (i%2 == 0)
-            coins_.push_back(new Coin({425+i*200, 50}, movType::LINEAR, {425 + i*200, 80}));
-        else 
-            coins_.push_back(new Coin({375+i*200, 70}, movType::LINEAR, {450 + i*200, 70}));
-    }
-    plat_finder_ = Finder<Platform>(platforms_);
-    hard_block_finder_ = Finder<HardBlock>(hard_blocks_);
-    coin_finder_ = Finder<Coin> (coins_);
-    boo_finder_ = Finder<Boo> (boos_);
-    terrain_finder_ = Finder<Terrain>(terrain_);
+      text_(new Text), timer_(text_), jutge_(0,0,0,0) {
+    
+    level_initiation();
 }
 
 void Game::process_keys(pro2::Window& window) {
@@ -49,10 +27,11 @@ void Game::process_keys(pro2::Window& window) {
     if(window.was_key_pressed('P')) {
         paused_ = !paused_;
     }
-    else if (window.was_key_pressed('R') and !mario_.is_alive()) {
+    else if (window.was_key_pressed('R') and (!mario_.is_alive() or win_)) {
         mario_.set_pos({window.width()/2, 150});
         window.set_camera_topleft({0,0});
         mario_.set_lives(3);
+        level_initiation();
     }
     else if (window.was_key_pressed(Keys::Space)) {
         intro_ = false;
@@ -117,7 +96,7 @@ void Game::update_objects(pro2::Window& window) {    //While the platform-player
 }
 
 void Game::update_camera(pro2::Window& window) {
-    const Pt pos = mario_.pos() - Pt {0, 40};
+    const Pt pos = mario_.pos() - Pt {0, 10};
     const Pt cam = window.camera_center();
 
     const int left = cam.x - window.width() / 4;
@@ -125,16 +104,18 @@ void Game::update_camera(pro2::Window& window) {
     const int top = cam.y - window.height() / 4;
     const int bottom = cam.y + window.height() / 4;
 
+    float camera_speed = 0.75;
+
     int dx = 0, dy = 0;
     if (pos.x > right) {
-        dx = pos.x - right;
+        dx = (pos.x - right)*camera_speed;
     } else if (pos.x < left) {
-        dx = pos.x - left;
+        dx = (pos.x - left)*camera_speed;
     }
     if (pos.y < top) {
-        dy = pos.y - top;
+        dy = (pos.y - top)*camera_speed;
     } else if (pos.y > bottom) {
-        dy = pos.y - bottom;
+        dy = (pos.y - bottom)*camera_speed;
     }
     
     window.move_camera({dx, dy});
@@ -201,14 +182,14 @@ void Game::paint(pro2::Window& window) {
             hb->paint(window);
         }
 
-        auto nearby_boos = boo_finder_.query(camera_rect);
-        for (auto b : nearby_boos) {
-            b->paint(window);
-        }
-
         auto nearby_terrain = terrain_finder_.query(camera_rect);
         for (auto t : nearby_terrain) {
             t->paint(window);
+        }
+
+        auto nearby_boos = boo_finder_.query(camera_rect);
+        for (auto b : nearby_boos) {
+            b->paint(window);
         }
 
         jutge_.paint(window);
@@ -260,6 +241,102 @@ void Game::paint(pro2::Window& window) {
         cam_top_centre -= Pt{displ, 0};
         text_->paint_phrase(window, cam_top_centre, phrase, white);
     }
+}
+
+void Game::level_initiation() {
+    clear_level();
+
+    //Map based on blocks of 16x16 pixel (or 8x8)
+    const int i = 16; //16x16 block
+    const int j = 10; //for smaller platforms
+    const int a = 6;  //coin displacement
+    const int b = 8;  //coin displacement
+
+    //Section 1: Fall
+    platforms_.push_back(Platform(11*i,18*i,12*i,12*i+j));
+    platforms_.push_back(Platform(18*i,25*i,15*i,15*i+j));
+    platforms_.push_back(Platform(11*i,18*i,18*i,18*i+j));
+    boos_.push_back(Boo({28*i,12*i}));
+    coins_.push_back(new Coin({21*i+a,13*i+b}));
+    coins_.push_back(new Coin({14*i+a,16*i+b}));
+    for (int k = 0; k < 12; k += 2) {
+        coins_.push_back(new Coin({21*i, (20+k)*i}));
+    }
+
+    //Section 2: Horizontal
+    terrain_.push_back(Terrain(0*i,39*i,34*i,50*i));
+    terrain_.push_back(Terrain(39*i,53*i,37*i,53*i));
+    terrain_.push_back(Terrain(56*i,85*i-1,37*i,53*i));
+    for(int k = 0; k < 5; ++k) {
+        hard_blocks_.push_back(HardBlock((47+k)*i,53*i-1,(36-k)*i,(37-k)*i));
+        hard_blocks_.push_back(HardBlock(56*i,(62-k)*i-1,(36-k)*i,(37-k)*i));
+    }
+    boos_.push_back(Boo({53*i,36*i}));
+    coins_.push_back(new Coin({54*i+a,27*i+b}, movType::LINEAR, {54*i+a,34*i+b}));
+    platforms_.push_back(Platform(60*i,64*i,29*i,29*i+j));
+    platforms_.push_back(Platform(60*i,64*i,23*i,23*i+j));
+    platforms_.push_back(Platform(54*i,59*i,26*i,26*i+j));
+    coins_.push_back(new Coin({56*i+a,23*i+b}));
+    coins_.push_back(new Coin({62*i+a,26*i+b}));
+
+    for(int k = 0; k < 12; k += 3) {
+        coins_.push_back(new Coin({68*i+a,(24+k)*i+b}));
+    }
+    boos_.push_back(Boo({73*i,25*i}));
+    coins_.push_back(new Coin({76*i+a,32*i+b}, movType::LINEAR, {81*i+a,32*i+b}));
+    Pt spin_center = {62*i+a,19*i+b};
+    coins_.push_back(new Coin({60*i+a-1,19*i+b}, movType::CIRCULAR, spin_center));
+    coins_.push_back(new Coin({64*i+a,19*i+b}, movType::CIRCULAR, spin_center));
+    coins_.push_back(new Coin({62*i+a,17*i+b-1}, movType::CIRCULAR, spin_center));
+    coins_.push_back(new Coin({62*i+a,21*i+b}, movType::CIRCULAR, spin_center));
+
+    //Section 3: Platformer
+    platforms_.push_back(Platform(86*i,91*i,34*i,34*i+j));
+    platforms_.push_back(Platform(93*i,99*i,35*i,35*i+j));
+    platforms_.push_back(Platform(99*i,104*i,32*i,32*i+j));
+    platforms_.push_back(Platform(94*i,100*i,29*i,29*i+j));
+    platforms_.push_back(Platform(100*i,106*i,26*i,26*i+j));
+    platforms_.push_back(Platform(108*i,113*i,27*i,27*i+j));
+    boos_.push_back(Boo({107*i,15*i}));
+    coins_.push_back(new Coin({111*i+a,23*i+b}));
+    
+
+    //Section 4: Cave
+    terrain_.push_back(Terrain(115*i,130*i,29*i,50*i));
+    hard_blocks_.push_back(HardBlock(130*i,131*i-1,29*i,41*i));
+    hard_blocks_.push_back(HardBlock(134*i,135*i-1,0*i,37*i));
+    for (int k = 0; k < 12; k += 3) {
+        coins_.push_back(new Coin({132*i, (28+k)*i}));
+    }
+    hard_blocks_.push_back(HardBlock(130*i,148*i-1,40*i,41*i));
+    hard_blocks_.push_back(HardBlock(134*i,148*i-1,36*i,37*i));
+    hard_blocks_.push_back(HardBlock(147*i,148*i-1,36*i,41*i));
+
+    jutge_ = Jutge(145*i,146*i,38*i,39*i);
+    //Add to finders
+    plat_finder_ = Finder<Platform>(platforms_);
+    hard_block_finder_ = Finder<HardBlock>(hard_blocks_);
+    terrain_finder_ = Finder<Terrain>(terrain_);
+    coin_finder_ = Finder<Coin> (coins_);
+    boo_finder_ = Finder<Boo> (boos_);
+}
+
+void Game::clear_level() {
+    win_ = false;
+    intro_ = true;
+    mario_.set_score(0);
+
+    plat_finder_.clear(platforms_);
+    hard_block_finder_.clear(hard_blocks_);
+    terrain_finder_.clear(terrain_);
+    coin_finder_ .clear(coins_);
+    boo_finder_.clear(boos_);
+
+    platforms_.clear();
+    hard_blocks_.clear();
+    terrain_.clear();
+    coins_.clear();
+    boos_.clear();
 }
 
 const int _ = -1; //transparent
