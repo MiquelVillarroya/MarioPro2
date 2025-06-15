@@ -13,6 +13,7 @@
 #include "boo.hh"
 #include "terrain.hh"
 #include "particleManager.hh"
+#include "jutge.hh"
 
 class Game {
  private:
@@ -34,6 +35,7 @@ class Game {
     std::list<Boo> boos_;
     Finder<Boo> boo_finder_;
 
+    Jutge jutge_;
 
     //update
     void process_keys(pro2::Window& window);
@@ -72,7 +74,7 @@ class Game {
 
     static const int extra_ = 60;
     static const int top_margin_ = 5;
-    
+
     static const int mini_coin_texture_width_ = 10;
     static const int lives_texture_width_ = 14;
 };

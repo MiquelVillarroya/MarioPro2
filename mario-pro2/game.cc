@@ -6,6 +6,7 @@
 #include "globals.hh"
 
 #include <vector>
+#include <iostream>
 
 using namespace pro2;
 using namespace std;
@@ -13,7 +14,7 @@ using namespace std;
 Game::Game(int width, int height)
     : mario_({width / 2, 150}, Keys::Left, Keys::Right, Keys::Space),
       finished_(false), paused_(false), part_manager_(new ParticleManager),
-      text_(new Text), timer_(text_) {
+      text_(new Text), timer_(text_), jutge_(100,116,184,200) {
     platforms_.push_back(Platform(100, 300, 200, 211));
     platforms_.push_back(Platform(0, 200, 250, 261));
     //test
@@ -76,7 +77,7 @@ void Game::update_objects(pro2::Window& window) {    //While the platform-player
     
 
     //Check for collisions between mario and coins
-    Rect mario_rect = mario_.get_rect();
+    const Rect mario_rect = mario_.get_rect();
     auto nearby_coins = coin_finder_.query(camera_rect);
     auto itc = nearby_coins.begin();
     while (itc != nearby_coins.end()) {
@@ -93,7 +94,7 @@ void Game::update_objects(pro2::Window& window) {    //While the platform-player
     }
 
     //Update boos according to mario behaviour, also check for collision
-    Pt mario_pos = mario_.pos() - Pt{0, 8};
+    const Pt mario_pos = mario_.pos() - Pt{0, 8};
     auto nearby_boos = boo_finder_.query(camera_rect);
     for (auto b : nearby_boos) {
         if (mario_.is_looking_left() and mario_pos.x < b->pos().x
@@ -108,7 +109,10 @@ void Game::update_objects(pro2::Window& window) {    //While the platform-player
         }
     }
 
-    if (checkCollision(mario_rect, jutge_rect)) win_ = true;
+    if (checkCollision(mario_rect, jutge_.get_rect())) {
+        win_ = true;
+        cout << "a";
+    }
 
 }
 
@@ -207,6 +211,7 @@ void Game::paint(pro2::Window& window) {
             t->paint(window);
         }
 
+        jutge_.paint(window);
         mario_.paint(window);
 
         //print score
